@@ -8,8 +8,12 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-cream: #FFF9F3;
+  --color-purple: #6B4EFF;
+  --color-yellow: #FFD84D;
+  --color-yellow-dark: #E6B800;
+  --font-fredoka: var(--font-fredoka);
+  --font-nunito: var(--font-nunito);
 }
 
 @media (prefers-color-scheme: dark) {
