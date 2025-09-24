@@ -192,11 +192,11 @@ export default function EditDeckPage() {
                       }}
                       placeholder="Enter the question or prompt..."
                       rows={3}
-                      className={`w-full px-4 py-3 border rounded-lg font-nunito resize-none transition-colors ${
+                      className={`w-full px-6 py-4 rounded-2xl font-nunito font-semibold resize-none transition-all duration-200 shadow-lg border-4 ${
                         cardErrors.front
-                          ? 'border-red-300 focus:ring-2 focus:ring-red-500'
-                          : 'border-gray-200 focus:ring-2 focus:ring-purple'
-                      } focus:border-transparent`}
+                          ? 'bg-red-50 border-warning-red/30 focus:bg-white focus:border-warning-red focus:shadow-xl focus:shadow-warning-red/20'
+                          : 'bg-cream2 border-gray-200 focus:bg-white focus:border-primary-purple focus:shadow-xl focus:shadow-primary-purple/20'
+                      }`}
                     />
                     {cardErrors.front && (
                       <p className="mt-1 text-sm text-red-600 font-nunito">{cardErrors.front}</p>
@@ -215,11 +215,11 @@ export default function EditDeckPage() {
                       }}
                       placeholder="Enter the answer..."
                       rows={3}
-                      className={`w-full px-4 py-3 border rounded-lg font-nunito resize-none transition-colors ${
+                      className={`w-full px-6 py-4 rounded-2xl font-nunito font-semibold resize-none transition-all duration-200 shadow-lg border-4 ${
                         cardErrors.back
-                          ? 'border-red-300 focus:ring-2 focus:ring-red-500'
-                          : 'border-gray-200 focus:ring-2 focus:ring-purple'
-                      } focus:border-transparent`}
+                          ? 'bg-red-50 border-warning-red/30 focus:bg-white focus:border-warning-red focus:shadow-xl focus:shadow-warning-red/20'
+                          : 'bg-cream2 border-gray-200 focus:bg-white focus:border-primary-purple focus:shadow-xl focus:shadow-primary-purple/20'
+                      }`}
                     />
                     {cardErrors.back && (
                       <p className="mt-1 text-sm text-red-600 font-nunito">{cardErrors.back}</p>
@@ -271,11 +271,11 @@ export default function EditDeckPage() {
                                   setCardErrors(prev => ({ ...prev, front: undefined }));
                                 }}
                                 rows={2}
-                                className={`w-full px-3 py-2 border rounded font-nunito text-sm resize-none ${
+                                className={`w-full px-4 py-3 rounded-xl font-nunito text-sm font-semibold resize-none transition-all duration-200 shadow-md border-3 ${
                                   cardErrors.front
-                                    ? 'border-red-300 focus:ring-1 focus:ring-red-500'
-                                    : 'border-gray-200 focus:ring-1 focus:ring-purple'
-                                } focus:border-transparent`}
+                                    ? 'bg-red-50 border-warning-red/30 focus:bg-white focus:border-warning-red focus:shadow-lg focus:shadow-warning-red/20'
+                                    : 'bg-cream2 border-gray-200 focus:bg-white focus:border-primary-purple focus:shadow-lg focus:shadow-primary-purple/20'
+                                }`}
                               />
                               {cardErrors.front && (
                                 <p className="mt-1 text-xs text-red-600 font-nunito">{cardErrors.front}</p>
@@ -293,11 +293,11 @@ export default function EditDeckPage() {
                                   setCardErrors(prev => ({ ...prev, back: undefined }));
                                 }}
                                 rows={2}
-                                className={`w-full px-3 py-2 border rounded font-nunito text-sm resize-none ${
+                                className={`w-full px-4 py-3 rounded-xl font-nunito text-sm font-semibold resize-none transition-all duration-200 shadow-md border-3 ${
                                   cardErrors.back
-                                    ? 'border-red-300 focus:ring-1 focus:ring-red-500'
-                                    : 'border-gray-200 focus:ring-1 focus:ring-purple'
-                                } focus:border-transparent`}
+                                    ? 'bg-red-50 border-warning-red/30 focus:bg-white focus:border-warning-red focus:shadow-lg focus:shadow-warning-red/20'
+                                    : 'bg-cream2 border-gray-200 focus:bg-white focus:border-primary-purple focus:shadow-lg focus:shadow-primary-purple/20'
+                                }`}
                               />
                               {cardErrors.back && (
                                 <p className="mt-1 text-xs text-red-600 font-nunito">{cardErrors.back}</p>
