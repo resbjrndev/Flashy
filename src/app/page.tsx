@@ -1,24 +1,31 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
 import Link from "next/link";
 import Layout from "@/components/Layout";
 import Button from "@/components/Button";
 import DeckTile from "@/components/DeckTile";
 import ThemeShopPreview from "@/components/ThemeShopPreview";
-import { Deck } from "@/types";
-import { getDecks, initializeWithMockData } from "@/lib/storage";
+import { useDecks } from "@/hooks/useDecks";
 
 export default function Home() {
-  const [decks, setDecks] = useState<Deck[]>([]);
+  const { decks, loading } = useDecks();
 
-  useEffect(() => {
-    // Initialize with mock data if needed and load decks
-    initializeWithMockData();
-    const loadedDecks = getDecks();
-    setDecks(loadedDecks);
-  }, []);
+  if (loading) {
+    return (
+      <Layout>
+        <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center">
+          <div className="text-center">
+            <div className="w-16 h-16 bg-gradient-to-br from-purple/10 to-yellow/10 rounded-2xl flex items-center justify-center mx-auto mb-4 animate-pulse">
+              <div className="w-8 h-8 bg-purple/20 rounded-full animate-bounce"></div>
+            </div>
+            <h1 className="text-2xl font-fredoka font-bold text-gray-900 mb-2">Loading Dashboard</h1>
+            <p className="font-nunito text-gray-600">Please wait while we load your decks...</p>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
 
   return (
     <Layout>
