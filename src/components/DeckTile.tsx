@@ -1,20 +1,30 @@
 "use client";
 
 import { motion } from "framer-motion";
-import Link from "next/link";
-import { Deck } from "@/types";
 
 interface DeckTileProps {
-  deck: Deck;
+  id: string;
+  title: string;
+  description: string;
+  cardCount: number;
+  category: string;
+  onStudy: () => void;
+  onEdit: () => void;
   index?: number;
 }
 
-export default function DeckTile({ deck, index = 0 }: DeckTileProps) {
-  const cardCount = deck.cards.length;
-
+export default function DeckTile({
+  title,
+  description,
+  cardCount,
+  category,
+  onStudy,
+  onEdit,
+  index = 0
+}: DeckTileProps) {
   return (
     <motion.div
-      className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-100"
+      className="bg-white border-4 border-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all duration-200"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{
@@ -25,85 +35,43 @@ export default function DeckTile({ deck, index = 0 }: DeckTileProps) {
       whileHover={{
         y: -4,
         scale: 1.02,
-        boxShadow: "0 20px 40px -8px rgba(0, 0, 0, 0.15)"
+        transition: { duration: 0.2 }
       }}
-      transition={{
-        type: "spring",
-        stiffness: 300,
-        damping: 20
+      whileTap={{
+        scale: 0.98,
+        transition: { duration: 0.12 }
       }}
     >
-      {/* Header with color accent */}
-      <div
-        className="h-2 w-full"
-        style={{ backgroundColor: deck.color || '#6B4EFF' }}
-      />
+      <div className="flex justify-between items-start mb-3">
+        <h3 className="font-fredoka font-bold text-lg text-gray-800">{title}</h3>
+        <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
+          {category}
+        </span>
+      </div>
 
-      <div className="p-6">
-        {/* Title and Description */}
-        <div className="mb-4">
-          <h3 className="font-fredoka font-bold text-xl text-gray-900 mb-2">
-            {deck.title}
-          </h3>
-          <p className="font-nunito text-gray-600 text-sm line-clamp-2">
-            {deck.description}
-          </p>
-        </div>
+      <p className="text-gray-600 text-sm mb-4 font-nunito">
+        {description}
+      </p>
 
-        {/* Stats */}
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center space-x-4">
-            <div className="flex items-center space-x-1">
-              <svg
-                className="w-4 h-4 text-gray-500"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
-                />
-              </svg>
-              <span className="font-nunito text-sm text-gray-600">
-                {cardCount} {cardCount === 1 ? 'card' : 'cards'}
-              </span>
-            </div>
+      <div className="flex justify-between items-center">
+        <span className="text-gray-500 text-sm font-nunito">
+          {cardCount} cards
+        </span>
 
-            {deck.category && (
-              <span className="px-2 py-1 bg-gray-100 text-gray-600 text-xs font-nunito rounded-full">
-                {deck.category}
-              </span>
-            )}
-          </div>
-        </div>
-
-        {/* Actions */}
-        <div className="flex space-x-3">
-          <Link
-            href={`/deck/${deck.id}/study`}
-            className="flex-1 bg-purple text-white font-nunito font-semibold py-2 px-4 rounded-lg hover:bg-purple/90 transition-colors duration-200 text-center text-sm"
+        <div className="flex gap-2">
+          <button
+            onClick={onStudy}
+            className="bg-purple-500 text-white px-4 py-2 rounded-full text-sm font-fredoka font-medium hover:bg-purple-600 transition-colors"
           >
-            Review
-          </Link>
-          <Link
-            href={`/deck/${deck.id}`}
-            className="flex-1 bg-gray-100 text-gray-700 font-nunito font-semibold py-2 px-4 rounded-lg hover:bg-gray-200 transition-colors duration-200 text-center text-sm"
+            Study
+          </button>
+          <button
+            onClick={onEdit}
+            className="bg-gray-100 text-purple-500 px-4 py-2 rounded-full text-sm font-fredoka font-medium hover:bg-gray-200 transition-colors"
           >
             Edit
-          </Link>
+          </button>
         </div>
-
-        {/* Last studied info */}
-        {deck.lastStudied && (
-          <div className="mt-3 pt-3 border-t border-gray-100">
-            <p className="font-nunito text-xs text-gray-500">
-              Last studied: {new Date(deck.lastStudied).toLocaleDateString()}
-            </p>
-          </div>
-        )}
       </div>
     </motion.div>
   );

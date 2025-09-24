@@ -119,7 +119,10 @@ export default function NewDeckPage() {
 
             <motion.form
               onSubmit={handleSubmit}
-              className="bg-white rounded-xl shadow-lg border border-gray-100 p-8"
+              className="bg-white rounded-2xl border-6 border-white p-10 relative overflow-hidden"
+              style={{
+                boxShadow: "0 12px 28px rgba(0, 0, 0, 0.15), 0 6px 12px rgba(0, 0, 0, 0.1)"
+              }}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
@@ -134,10 +137,10 @@ export default function NewDeckPage() {
                     value={formData.title}
                     onChange={(e) => handleInputChange('title', e.target.value)}
                     placeholder="Enter deck title..."
-                    className={`w-full px-4 py-3 border rounded-lg font-nunito transition-colors ${
+                    className={`w-full px-6 py-4 rounded-2xl font-nunito font-semibold transition-all duration-200 shadow-lg border-4 ${
                       errors.title
-                        ? 'border-red-300 focus:ring-2 focus:ring-red-500 focus:border-transparent'
-                        : 'border-gray-200 focus:ring-2 focus:ring-purple focus:border-transparent'
+                        ? 'bg-red-50 border-warning-red/30 focus:bg-white focus:border-warning-red focus:shadow-xl focus:shadow-warning-red/20'
+                        : 'bg-cream2 border-gray-200 focus:bg-white focus:border-primary-purple focus:shadow-xl focus:shadow-primary-purple/20'
                     }`}
                   />
                   {errors.title && (
@@ -154,10 +157,10 @@ export default function NewDeckPage() {
                     onChange={(e) => handleInputChange('description', e.target.value)}
                     placeholder="Describe your deck..."
                     rows={3}
-                    className={`w-full px-4 py-3 border rounded-lg font-nunito resize-none transition-colors ${
+                    className={`w-full px-6 py-4 rounded-2xl font-nunito font-semibold resize-none transition-all duration-200 shadow-lg border-4 ${
                       errors.description
-                        ? 'border-red-300 focus:ring-2 focus:ring-red-500 focus:border-transparent'
-                        : 'border-gray-200 focus:ring-2 focus:ring-purple focus:border-transparent'
+                        ? 'bg-red-50 border-warning-red/30 focus:bg-white focus:border-warning-red focus:shadow-xl focus:shadow-warning-red/20'
+                        : 'bg-cream2 border-gray-200 focus:bg-white focus:border-primary-purple focus:shadow-xl focus:shadow-primary-purple/20'
                     }`}
                   />
                   {errors.description && (
@@ -173,7 +176,7 @@ export default function NewDeckPage() {
                     <select
                       value={formData.category}
                       onChange={(e) => handleInputChange('category', e.target.value)}
-                      className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple focus:border-transparent font-nunito"
+                      className="w-full px-6 py-4 rounded-2xl font-nunito font-semibold transition-all duration-200 shadow-lg border-4 bg-cream2 border-gray-200 focus:bg-white focus:border-primary-purple focus:shadow-xl focus:shadow-primary-purple/20"
                     >
                       <option value="Language Learning">Language Learning</option>
                       <option value="Science">Science</option>
@@ -193,10 +196,10 @@ export default function NewDeckPage() {
                           key={color}
                           type="button"
                           onClick={() => handleInputChange('color', color)}
-                          className={`w-10 h-10 rounded-lg border-2 transition-colors ${
+                          className={`w-12 h-12 rounded-2xl border-4 transition-all duration-200 shadow-lg hover:shadow-xl hover:-translate-y-1 active:translate-y-0 active:scale-95 ${
                             formData.color === color
-                              ? 'border-gray-900 ring-2 ring-gray-300'
-                              : 'border-gray-200 hover:border-gray-300'
+                              ? 'border-white ring-4 ring-primary-purple/30 shadow-xl'
+                              : 'border-white/60 hover:border-white'
                           }`}
                           style={{ backgroundColor: color }}
                         />
