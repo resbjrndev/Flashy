@@ -10,6 +10,7 @@ interface ButtonProps {
   onClick?: () => void;
   disabled?: boolean;
   className?: string;
+  type?: "button" | "submit" | "reset";
 }
 
 export default function Button({
@@ -19,6 +20,7 @@ export default function Button({
   onClick,
   disabled = false,
   className = "",
+  type = "button",
 }: ButtonProps) {
   const baseClasses = "font-nunito font-semibold rounded-xl transition-all duration-200 border-2 cursor-pointer select-none";
 
@@ -41,6 +43,7 @@ export default function Button({
 
   return (
     <motion.button
+      type={type}
       className={buttonClasses}
       onClick={disabled ? undefined : onClick}
       disabled={disabled}
