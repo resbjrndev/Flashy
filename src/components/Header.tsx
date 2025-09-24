@@ -5,9 +5,9 @@ import Link from "next/link";
 
 export default function Header() {
   const navItems = [
-    { name: "Learn", href: "/learn" },
+    { name: "Shop", href: "/shop" },
     { name: "Decks", href: "/decks" },
-    { name: "Progress", href: "/progress" },
+    { name: "Settings", href: "/settings" },
   ];
 
   return (

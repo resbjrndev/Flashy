@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run dev:*)",
+      "Bash(move page.tsx page-original.tsx)",
+      "Bash(move page-simple.tsx page.tsx)",
+      "Bash(ren:*)",
+      "Bash(npm run build:*)",
+      "Bash(timeout:*)",
+      "Bash(curl:*)",
+      "Bash(git add:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

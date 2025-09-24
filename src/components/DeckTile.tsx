@@ -22,7 +22,16 @@ export default function DeckTile({ deck, index = 0 }: DeckTileProps) {
         delay: index * 0.1,
         ease: "easeOut",
       }}
-      whileHover={{ y: -4 }}
+      whileHover={{
+        y: -4,
+        scale: 1.02,
+        boxShadow: "0 20px 40px -8px rgba(0, 0, 0, 0.15)"
+      }}
+      transition={{
+        type: "spring",
+        stiffness: 300,
+        damping: 20
+      }}
     >
       {/* Header with color accent */}
       <div
