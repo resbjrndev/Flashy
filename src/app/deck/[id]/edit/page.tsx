@@ -192,7 +192,7 @@ export default function EditDeckPage() {
                       }}
                       placeholder="Enter the question or prompt..."
                       rows={3}
-                      className={`w-full px-6 py-4 rounded-2xl font-nunito font-semibold resize-none transition-all duration-200 shadow-lg border-4 ${
+                      className={`w-full px-6 py-4 rounded-2xl font-nunito font-semibold resize-none transition-all duration-200 shadow-lg border-4 text-gray-900 placeholder-gray-500 ${
                         cardErrors.front
                           ? 'bg-red-50 border-warning-red/30 focus:bg-white focus:border-warning-red focus:shadow-xl focus:shadow-warning-red/20'
                           : 'bg-cream2 border-gray-200 focus:bg-white focus:border-primary-purple focus:shadow-xl focus:shadow-primary-purple/20'
@@ -215,7 +215,7 @@ export default function EditDeckPage() {
                       }}
                       placeholder="Enter the answer..."
                       rows={3}
-                      className={`w-full px-6 py-4 rounded-2xl font-nunito font-semibold resize-none transition-all duration-200 shadow-lg border-4 ${
+                      className={`w-full px-6 py-4 rounded-2xl font-nunito font-semibold resize-none transition-all duration-200 shadow-lg border-4 text-gray-900 placeholder-gray-500 ${
                         cardErrors.back
                           ? 'bg-red-50 border-warning-red/30 focus:bg-white focus:border-warning-red focus:shadow-xl focus:shadow-warning-red/20'
                           : 'bg-cream2 border-gray-200 focus:bg-white focus:border-primary-purple focus:shadow-xl focus:shadow-primary-purple/20'
@@ -271,7 +271,7 @@ export default function EditDeckPage() {
                                   setCardErrors(prev => ({ ...prev, front: undefined }));
                                 }}
                                 rows={2}
-                                className={`w-full px-4 py-3 rounded-xl font-nunito text-sm font-semibold resize-none transition-all duration-200 shadow-md border-3 ${
+                                className={`w-full px-4 py-3 rounded-xl font-nunito text-sm font-semibold resize-none transition-all duration-200 shadow-md border-3 text-gray-900 placeholder-gray-500 ${
                                   cardErrors.front
                                     ? 'bg-red-50 border-warning-red/30 focus:bg-white focus:border-warning-red focus:shadow-lg focus:shadow-warning-red/20'
                                     : 'bg-cream2 border-gray-200 focus:bg-white focus:border-primary-purple focus:shadow-lg focus:shadow-primary-purple/20'
@@ -293,7 +293,7 @@ export default function EditDeckPage() {
                                   setCardErrors(prev => ({ ...prev, back: undefined }));
                                 }}
                                 rows={2}
-                                className={`w-full px-4 py-3 rounded-xl font-nunito text-sm font-semibold resize-none transition-all duration-200 shadow-md border-3 ${
+                                className={`w-full px-4 py-3 rounded-xl font-nunito text-sm font-semibold resize-none transition-all duration-200 shadow-md border-3 text-gray-900 placeholder-gray-500 ${
                                   cardErrors.back
                                     ? 'bg-red-50 border-warning-red/30 focus:bg-white focus:border-warning-red focus:shadow-lg focus:shadow-warning-red/20'
                                     : 'bg-cream2 border-gray-200 focus:bg-white focus:border-primary-purple focus:shadow-lg focus:shadow-primary-purple/20'
@@ -359,7 +359,7 @@ export default function EditDeckPage() {
             >
               <Button
                 size="lg"
-                onClick={() => router.push(`/deck/${deck.id}/study`)}
+                onClick={() => router.push(`/deck/${deck.id}/review`)}
                 disabled={deck.cards.length === 0}
               >
                 Start Studying ({deck.cards.length} cards)

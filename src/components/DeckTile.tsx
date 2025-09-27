@@ -35,11 +35,7 @@ export default function DeckTile({
       whileHover={{
         y: -4,
         scale: 1.02,
-        transition: { duration: 0.2 }
-      }}
-      whileTap={{
-        scale: 0.98,
-        transition: { duration: 0.12 }
+        transition: { duration: 0.1, ease: "easeOut" }
       }}
     >
       <div className="flex justify-between items-start mb-3">
@@ -61,13 +57,35 @@ export default function DeckTile({
         <div className="flex gap-2">
           <button
             onClick={onStudy}
-            className="bg-purple-500 text-white px-4 py-2 rounded-full text-sm font-fredoka font-medium hover:bg-purple-600 transition-colors"
+            className="text-white px-4 py-2 rounded-full text-sm font-fredoka font-bold transition-all duration-150 transform hover:translate-y-[1px] active:translate-y-[2px]"
+            style={{
+              background: 'linear-gradient(135deg, #7C3AED 0%, #5B21B6 100%)',
+              boxShadow: '0 4px 0 #4C1D95, 0 6px 12px rgba(76, 29, 149, 0.4)',
+              textShadow: '0 1px 2px rgba(0, 0, 0, 0.3)'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.boxShadow = '0 3px 0 #4C1D95, 0 5px 12px rgba(76, 29, 149, 0.4)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.boxShadow = '0 4px 0 #4C1D95, 0 6px 12px rgba(76, 29, 149, 0.4)';
+            }}
           >
             Study
           </button>
           <button
             onClick={onEdit}
-            className="bg-gray-100 text-purple-500 px-4 py-2 rounded-full text-sm font-fredoka font-medium hover:bg-gray-200 transition-colors"
+            className="text-purple-600 px-4 py-2 rounded-full text-sm font-fredoka font-bold transition-all duration-150 transform hover:translate-y-[1px] active:translate-y-[2px]"
+            style={{
+              background: 'linear-gradient(135deg, #F3F4F6 0%, #E5E7EB 100%)',
+              boxShadow: '0 4px 0 #D1D5DB, 0 6px 12px rgba(209, 213, 219, 0.4)',
+              textShadow: '0 1px 2px rgba(0, 0, 0, 0.1)'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.boxShadow = '0 3px 0 #D1D5DB, 0 5px 12px rgba(209, 213, 219, 0.4)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.boxShadow = '0 4px 0 #D1D5DB, 0 6px 12px rgba(209, 213, 219, 0.4)';
+            }}
           >
             Edit
           </button>

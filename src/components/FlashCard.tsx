@@ -7,7 +7,7 @@ import { Card } from "@/types";
 interface FlashCardProps {
   card: Card;
   showAnswer?: boolean;
-  onFlip?: () => void;
+  onFlip?: (flipped: boolean) => void;
   className?: string;
 }
 
@@ -20,8 +20,9 @@ export default function FlashCard({
   const [isFlipped, setIsFlipped] = useState(showAnswer);
 
   const handleFlip = () => {
-    setIsFlipped(!isFlipped);
-    onFlip?.();
+    const newFlipped = !isFlipped;
+    setIsFlipped(newFlipped);
+    onFlip?.(newFlipped);
   };
 
   return (
@@ -29,7 +30,7 @@ export default function FlashCard({
       <motion.div
         className="relative w-full aspect-[3/2] min-h-[200px] cursor-pointer preserve-3d"
         animate={{ rotateY: isFlipped ? 180 : 0 }}
-        transition={{ duration: 0.3, ease: "easeInOut" }}
+        transition={{ duration: 0.6, ease: "easeInOut" }}
         onClick={handleFlip}
         whileHover={{
           y: -12,

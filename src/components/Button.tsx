@@ -1,11 +1,10 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { ReactNode } from "react";
+import { ReactNode, useState } from "react";
 
 interface ButtonProps {
   children: ReactNode;
-  variant?: "primary" | "secondary" | "success" | "warning";
+  variant?: "primary" | "secondary" | "success" | "warning" | "destructive" | "constructive" | "neutral";
   size?: "sm" | "md" | "lg";
   onClick?: () => void;
   disabled?: boolean;
@@ -22,7 +21,9 @@ export default function Button({
   className = "",
   type = "button",
 }: ButtonProps) {
-  const baseClasses = "font-fredoka font-bold rounded-full cursor-pointer select-none relative border-6 border-white btn-sway btn-shine sparkle-container bounce-ease";
+  const [isHovered, setIsHovered] = useState(false);
+
+  const baseClasses = "font-fredoka font-bold rounded-full cursor-pointer select-none relative sparkle-container inline-block transition-all duration-200";
 
   const variantClasses = {
     primary: `
@@ -40,6 +41,18 @@ export default function Button({
     warning: `
       text-white
       shadow-lg
+    `,
+    destructive: `
+      text-white
+      shadow-lg
+    `,
+    constructive: `
+      text-white
+      shadow-lg
+    `,
+    neutral: `
+      text-gray-700
+      shadow-lg
     `
   };
 
@@ -53,33 +66,80 @@ export default function Button({
     ? "opacity-50 cursor-not-allowed grayscale"
     : "";
 
-  const buttonClasses = `${baseClasses} ${variantClasses[variant]} ${sizeClasses[size]} ${disabledClasses} ${className}`;
+  const hoverClasses = isHovered ? 'animate-[gentle-sway_2s_ease-in-out_infinite]' : '';
+  const buttonClasses = `${baseClasses} ${variantClasses[variant]} ${sizeClasses[size]} ${disabledClasses} ${hoverClasses} ${className}`;
 
-  const getGradientStyle = () => {
+  const getGradientStyle = (isHovered = false) => {
     switch (variant) {
       case 'primary':
         return {
-          background: 'linear-gradient(135deg, #A78BFA 0%, #7C3AED 100%)',
-          boxShadow: '0 8px 24px rgba(124, 58, 237, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.3)',
-          textShadow: '0 1px 2px rgba(0, 0, 0, 0.3)'
+          background: 'linear-gradient(135deg, #7C3AED 0%, #5B21B6 100%)',
+          boxShadow: isHovered
+            ? '0 6px 0 #4C1D95, 0 10px 25px rgba(76, 29, 149, 0.4)'
+            : '0 8px 0 #4C1D95, 0 12px 25px rgba(76, 29, 149, 0.4)',
+          textShadow: '0 1px 2px rgba(0, 0, 0, 0.3)',
+          transform: isHovered ? 'translateY(2px)' : 'translateY(0px)',
+          border: 'none'
         };
       case 'secondary':
         return {
           background: 'linear-gradient(135deg, #FBBF24 0%, #F59E0B 100%)',
-          boxShadow: '0 8px 24px rgba(245, 158, 11, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.3)',
-          textShadow: '0 1px 2px rgba(0, 0, 0, 0.3)'
+          boxShadow: isHovered
+            ? '0 6px 0 #D97706, 0 10px 25px rgba(217, 119, 6, 0.4)'
+            : '0 8px 0 #D97706, 0 12px 25px rgba(217, 119, 6, 0.4)',
+          textShadow: '0 1px 2px rgba(0, 0, 0, 0.3)',
+          transform: isHovered ? 'translateY(2px)' : 'translateY(0px)',
+          border: 'none'
         };
       case 'success':
         return {
           background: 'linear-gradient(135deg, #86EFAC 0%, #10B981 100%)',
-          boxShadow: '0 8px 24px rgba(16, 185, 129, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.3)',
-          textShadow: '0 1px 2px rgba(0, 0, 0, 0.3)'
+          boxShadow: isHovered
+            ? '0 6px 0 #047857, 0 10px 25px rgba(4, 120, 87, 0.4)'
+            : '0 8px 0 #047857, 0 12px 25px rgba(4, 120, 87, 0.4)',
+          textShadow: '0 1px 2px rgba(0, 0, 0, 0.3)',
+          transform: isHovered ? 'translateY(2px)' : 'translateY(0px)',
+          border: 'none'
         };
       case 'warning':
         return {
           background: 'linear-gradient(135deg, #FCA5A5 0%, #EF4444 100%)',
-          boxShadow: '0 8px 24px rgba(239, 68, 68, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.3)',
-          textShadow: '0 1px 2px rgba(0, 0, 0, 0.3)'
+          boxShadow: isHovered
+            ? '0 6px 0 #B91C1C, 0 10px 25px rgba(185, 28, 28, 0.4)'
+            : '0 8px 0 #B91C1C, 0 12px 25px rgba(185, 28, 28, 0.4)',
+          textShadow: '0 1px 2px rgba(0, 0, 0, 0.3)',
+          transform: isHovered ? 'translateY(2px)' : 'translateY(0px)',
+          border: 'none'
+        };
+      case 'destructive':
+        return {
+          background: 'linear-gradient(135deg, #EF4444 0%, #DC2626 100%)',
+          boxShadow: isHovered
+            ? '0 6px 0 #991B1B, 0 10px 25px rgba(153, 27, 27, 0.4)'
+            : '0 8px 0 #991B1B, 0 12px 25px rgba(153, 27, 27, 0.4)',
+          textShadow: '0 1px 2px rgba(0, 0, 0, 0.3)',
+          transform: isHovered ? 'translateY(2px)' : 'translateY(0px)',
+          border: 'none'
+        };
+      case 'constructive':
+        return {
+          background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
+          boxShadow: isHovered
+            ? '0 6px 0 #047857, 0 10px 25px rgba(4, 120, 87, 0.4)'
+            : '0 8px 0 #047857, 0 12px 25px rgba(4, 120, 87, 0.4)',
+          textShadow: '0 1px 2px rgba(0, 0, 0, 0.3)',
+          transform: isHovered ? 'translateY(2px)' : 'translateY(0px)',
+          border: 'none'
+        };
+      case 'neutral':
+        return {
+          background: 'linear-gradient(135deg, #F3F4F6 0%, #E5E7EB 100%)',
+          boxShadow: isHovered
+            ? '0 6px 0 #9CA3AF, 0 10px 25px rgba(156, 163, 175, 0.4)'
+            : '0 8px 0 #9CA3AF, 0 12px 25px rgba(156, 163, 175, 0.4)',
+          textShadow: '0 1px 2px rgba(0, 0, 0, 0.2)',
+          transform: isHovered ? 'translateY(2px)' : 'translateY(0px)',
+          border: 'none'
         };
       default:
         return {};
@@ -87,31 +147,14 @@ export default function Button({
   };
 
   return (
-    <motion.button
+    <button
       type={type}
       className={buttonClasses}
       onClick={disabled ? undefined : onClick}
       disabled={disabled}
-      style={getGradientStyle()}
-      whileHover={disabled ? {} : {
-        y: -4,
-        scale: 1.05,
-        filter: 'brightness(1.1)',
-        boxShadow: variant === 'primary'
-          ? '0 12px 24px rgba(124, 58, 237, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.4)'
-          : undefined,
-        transition: { duration: 0.15 }
-      }}
-      whileTap={disabled ? {} : {
-        y: -1,
-        scale: 0.98,
-        transition: { duration: 0.1 }
-      }}
-      transition={{
-        type: "spring",
-        stiffness: 400,
-        damping: 25,
-      }}
+      style={getGradientStyle(isHovered)}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
     >
       {/* Inner highlight for tactile effect */}
       <div className="absolute inset-1 bg-white/10 rounded-full pointer-events-none" />
@@ -120,6 +163,6 @@ export default function Button({
       <span className="relative z-10">
         {children}
       </span>
-    </motion.button>
+    </button>
   );
 }
