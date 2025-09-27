@@ -8,7 +8,11 @@
       "Bash(npm run build:*)",
       "Bash(timeout:*)",
       "Bash(curl:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(npx tsc:*)",
+      "Bash(code .)",
+      "Bash(rm:*)",
+      "Read(//c/Users/kaspe/Desktop/Projects/**)"
     ],
     "deny": [],
     "ask": []
