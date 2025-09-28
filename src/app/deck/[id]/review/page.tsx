@@ -8,6 +8,7 @@ import Button from "@/components/Button";
 import FlashCard from "@/components/FlashCard";
 import ReviewHUD from "@/components/ReviewHUD";
 import ProgressBar from "@/components/ProgressBar";
+import LoadingSpinner from "@/components/LoadingSpinner";
 import { getDeck } from "@/lib/storage";
 import { Deck, Card } from "@/types";
 
@@ -70,15 +71,58 @@ export default function ReviewPage() {
     setIsFlipped(flipped);
   };
 
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (isAnimating) return;
+
+      switch (e.key) {
+        case ' ':
+        case 'Enter':
+          e.preventDefault();
+          if (!isFlipped) {
+            setIsFlipped(true);
+          }
+          break;
+        case '1':
+          e.preventDefault();
+          if (isFlipped) {
+            handleGrade('again');
+          }
+          break;
+        case '2':
+          e.preventDefault();
+          if (isFlipped) {
+            handleGrade('hard');
+          }
+          break;
+        case '3':
+          e.preventDefault();
+          if (isFlipped) {
+            handleGrade('good');
+          }
+          break;
+        case '4':
+          e.preventDefault();
+          if (isFlipped) {
+            handleGrade('easy');
+          }
+          break;
+        case 'Escape':
+          e.preventDefault();
+          router.push(`/deck/${deck?.id}`);
+          break;
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isFlipped, isAnimating, deck?.id, router]);
+
   if (loading) {
     return (
       <Layout>
-        <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center">
-          <div className="text-center">
-            <h1 className="text-2xl font-fredoka font-bold text-gray-900 mb-2">Loading...</h1>
-            <p className="font-nunito text-gray-600">Preparing your review session.</p>
-          </div>
-        </div>
+        <LoadingSpinner fullScreen message="Preparing your review session..." />
       </Layout>
     );
   }
@@ -104,7 +148,9 @@ export default function ReviewPage() {
 
   return (
     <Layout>
-      <div className="min-h-[calc(100vh-4rem)] px-4 py-8 bg-gradient-to-br from-cream/30 via-white to-yellow/10">
+      <div className="min-h-[calc(100vh-4rem)] px-4 py-8" style={{
+        background: 'linear-gradient(135deg, var(--theme-background-secondary), var(--theme-background))'
+      }}>
         <div className="max-w-4xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -134,54 +180,55 @@ export default function ReviewPage() {
               className="mb-8"
             />
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              {/* Flashcard */}
-              <div className="lg:col-span-2">
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={currentCardIndex}
-                    initial={{ opacity: 0, x: 100, rotateY: 15 }}
-                    animate={{ opacity: 1, x: 0, rotateY: 0 }}
-                    exit={{ opacity: 0, x: -100, rotateY: -15 }}
-                    transition={{ duration: 0.4, ease: "easeOut" }}
-                  >
-                    <FlashCard
-                      card={currentCard}
-                      onFlip={handleCardFlip}
-                      className="max-w-2xl mx-auto"
-                    />
-                  </motion.div>
-                </AnimatePresence>
-              </div>
+            {/* Flashcard Section */}
+            <div className="flex justify-center mb-8">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={currentCardIndex}
+                  initial={{ opacity: 0, x: 100 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -100 }}
+                  transition={{ duration: 0.4, ease: "easeOut" }}
+                  className="w-full max-w-2xl"
+                >
+                  <FlashCard
+                    card={currentCard}
+                    onFlip={handleCardFlip}
+                  />
+                </motion.div>
+              </AnimatePresence>
+            </div>
 
-              {/* Review HUD */}
-              <div className="lg:col-span-1">
-                <AnimatePresence>
-                  {isFlipped && (
-                    <ReviewHUD
-                      onGrade={handleGrade}
-                      disabled={isAnimating}
-                    />
-                  )}
-                </AnimatePresence>
-
-                {!isFlipped && (
-                  <motion.div
-                    className="bg-white rounded-2xl border-6 border-white p-6 shadow-lg text-center"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.3 }}
-                  >
-                    <div className="text-6xl mb-4">🤔</div>
-                    <h3 className="font-fredoka font-bold text-lg text-gray-900 mb-2">
-                      Think about it
-                    </h3>
-                    <p className="font-nunito text-gray-600 text-sm">
-                      Click the card to reveal the answer
-                    </p>
-                  </motion.div>
+            {/* Grade Buttons Section */}
+            <div className="flex justify-center">
+              <AnimatePresence>
+                {isFlipped && (
+                  <ReviewHUD
+                    onGrade={handleGrade}
+                    disabled={isAnimating}
+                  />
                 )}
-              </div>
+              </AnimatePresence>
+
+              {!isFlipped && (
+                <motion.div
+                  className="bg-white rounded-2xl border-4 border-white p-6 shadow-lg text-center max-w-md"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.3 }}
+                >
+                  <div className="text-6xl mb-4">🤔</div>
+                  <h3 className="font-fredoka font-bold text-lg text-gray-900 mb-2">
+                    Think about it
+                  </h3>
+                  <p className="font-nunito text-gray-600 text-sm mb-3">
+                    Click the card or press Enter/Space to reveal the answer
+                  </p>
+                  <div className="text-xs text-gray-500 font-nunito">
+                    Keyboard shortcuts: 1-4 for grading, Esc to exit
+                  </div>
+                </motion.div>
+              )}
             </div>
 
             {/* Bottom Actions */}

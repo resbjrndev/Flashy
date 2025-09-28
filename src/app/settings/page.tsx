@@ -1,158 +1,255 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useState } from "react";
 import Layout from "@/components/Layout";
+import ToggleSwitch from "@/components/ToggleSwitch";
 import Button from "@/components/Button";
+import { useTheme } from "@/contexts/ThemeContext";
 
 export default function SettingsPage() {
-  const settingsSections = [
+  const { currentTheme, setTheme, themes } = useTheme();
+
+  // Settings state
+  const [settings, setSettings] = useState({
+    notifications: true,
+    soundEffects: false,
+    autoSave: true,
+    darkMode: false,
+    animations: true,
+    compactMode: false,
+    showProgress: true,
+    autoAdvance: false,
+    studyReminders: true,
+    dataSync: false
+  });
+
+  const handleSettingChange = (key: string, value: boolean) => {
+    setSettings(prev => ({
+      ...prev,
+      [key]: value
+    }));
+  };
+
+  const settingsGroups = [
     {
-      title: "Study Preferences",
+      title: "Study Experience",
+      icon: "📚",
       settings: [
-        { name: "Daily study goal", type: "number", value: "20", unit: "cards" },
-        { name: "Study notifications", type: "toggle", value: true },
-        { name: "Auto-advance cards", type: "toggle", value: false },
-        { name: "Show progress stats", type: "toggle", value: true }
+        {
+          key: "autoAdvance",
+          label: "Auto-advance cards",
+          description: "Automatically move to next card after reviewing",
+          enabled: settings.autoAdvance
+        },
+        {
+          key: "showProgress",
+          label: "Show progress indicators",
+          description: "Display progress bars and completion stats",
+          enabled: settings.showProgress
+        },
+        {
+          key: "studyReminders",
+          label: "Study reminders",
+          description: "Get notified when it's time to review",
+          enabled: settings.studyReminders
+        }
       ]
     },
     {
-      title: "Appearance",
+      title: "Interface",
+      icon: "🎨",
       settings: [
-        { name: "Theme", type: "select", value: "Default", options: ["Default", "Ocean Breeze", "Forest Dawn", "Sunset Glow"] },
-        { name: "Card font size", type: "select", value: "Medium", options: ["Small", "Medium", "Large"] },
-        { name: "Animations", type: "toggle", value: true }
+        {
+          key: "animations",
+          label: "Smooth animations",
+          description: "Enable card flip and transition effects",
+          enabled: settings.animations
+        },
+        {
+          key: "compactMode",
+          label: "Compact mode",
+          description: "Show more content in less space",
+          enabled: settings.compactMode
+        },
+        {
+          key: "darkMode",
+          label: "Dark mode",
+          description: "Switch to dark color scheme",
+          enabled: settings.darkMode
+        }
       ]
     },
     {
-      title: "Account",
+      title: "Audio & Notifications",
+      icon: "🔔",
       settings: [
-        { name: "Export data", type: "button", action: "Export" },
-        { name: "Import data", type: "button", action: "Import" },
-        { name: "Reset progress", type: "button", action: "Reset", variant: "danger" }
+        {
+          key: "notifications",
+          label: "Push notifications",
+          description: "Receive study reminders and updates",
+          enabled: settings.notifications
+        },
+        {
+          key: "soundEffects",
+          label: "Sound effects",
+          description: "Play sounds for card flips and actions",
+          enabled: settings.soundEffects
+        }
+      ]
+    },
+    {
+      title: "Data & Storage",
+      icon: "💾",
+      settings: [
+        {
+          key: "autoSave",
+          label: "Auto-save progress",
+          description: "Automatically save your study progress",
+          enabled: settings.autoSave
+        },
+        {
+          key: "dataSync",
+          label: "Cloud sync",
+          description: "Sync your decks across devices",
+          enabled: settings.dataSync
+        }
       ]
     }
   ];
 
   return (
     <Layout>
-      <div className="min-h-[calc(100vh-4rem)] px-4 py-8">
+      <div className="min-h-[calc(100vh-4rem)] px-4 py-8 bg-gradient-to-br from-cream/30 via-white to-yellow/10">
         <div className="max-w-4xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
           >
+            {/* Header */}
             <div className="text-center mb-8">
               <h1 className="font-fredoka font-bold text-4xl text-gray-900 mb-4">
                 Settings
               </h1>
-              <p className="font-nunito text-lg text-gray-600 max-w-2xl mx-auto">
-                Customize your learning experience
+              <p className="font-nunito text-xl text-gray-600 max-w-2xl mx-auto">
+                Customize your Flashy experience to match your learning style.
               </p>
             </div>
 
+            {/* Current Theme Display */}
+            <motion.div
+              className="bg-white rounded-2xl border-6 border-white p-6 shadow-lg mb-8"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+            >
+              <h2 className="font-fredoka font-bold text-xl text-gray-900 mb-4 flex items-center">
+                🎨 Current Theme
+              </h2>
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="font-fredoka font-bold text-lg text-gray-800">
+                    {themes.find(t => t.id === currentTheme)?.name || 'Default'}
+                  </h3>
+                  <p className="font-nunito text-gray-600">
+                    {themes.find(t => t.id === currentTheme)?.description || 'Classic design'}
+                  </p>
+                </div>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={() => window.location.href = '/shop'}
+                >
+                  Browse Themes
+                </Button>
+              </div>
+            </motion.div>
+
+            {/* Settings Groups */}
             <div className="space-y-6">
-              {settingsSections.map((section, sectionIndex) => (
+              {settingsGroups.map((group, groupIndex) => (
                 <motion.div
-                  key={section.title}
-                  className="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden"
+                  key={group.title}
+                  className="bg-white rounded-2xl border-6 border-white p-6 shadow-lg"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{
-                    duration: 0.6,
-                    delay: 0.2 + sectionIndex * 0.1,
-                    ease: "easeOut",
-                  }}
+                  transition={{ delay: 0.3 + (groupIndex * 0.1) }}
                 >
-                  <div className="px-6 py-4 border-b border-gray-100">
-                    <h2 className="font-fredoka font-bold text-xl text-gray-900">
-                      {section.title}
-                    </h2>
-                  </div>
+                  <h2 className="font-fredoka font-bold text-xl text-gray-900 mb-6 flex items-center">
+                    <span className="mr-3">{group.icon}</span>
+                    {group.title}
+                  </h2>
 
-                  <div className="p-6 space-y-4">
-                    {section.settings.map((setting, settingIndex) => (
-                      <div
-                        key={setting.name}
-                        className="flex items-center justify-between py-3"
+                  <div className="space-y-4">
+                    {group.settings.map((setting, settingIndex) => (
+                      <motion.div
+                        key={setting.key}
+                        className="flex items-center justify-between p-4 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors duration-200"
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.4 + (groupIndex * 0.1) + (settingIndex * 0.05) }}
                       >
                         <div className="flex-1">
-                          <label className="font-nunito font-semibold text-gray-700">
-                            {setting.name}
-                          </label>
+                          <h3 className="font-fredoka font-bold text-lg text-gray-800">
+                            {setting.label}
+                          </h3>
+                          <p className="font-nunito text-sm text-gray-600 mt-1">
+                            {setting.description}
+                          </p>
                         </div>
 
-                        <div className="flex items-center space-x-4">
-                          {setting.type === "toggle" && (
-                            <div className="relative">
-                              <button
-                                className={`w-12 h-6 rounded-full transition-colors ${
-                                  setting.value === true ? "bg-purple" : "bg-gray-300"
-                                }`}
-                              >
-                                <div
-                                  className={`w-5 h-5 bg-white rounded-full shadow-sm transition-transform ${
-                                    setting.value === true ? "translate-x-6" : "translate-x-0.5"
-                                  }`}
-                                />
-                              </button>
-                            </div>
-                          )}
-
-                          {setting.type === "number" && (
-                            <div className="flex items-center space-x-2">
-                              <input
-                                type="number"
-                                defaultValue={setting.value}
-                                className="w-20 px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple focus:border-transparent font-nunito text-center"
-                              />
-                              {setting.unit && (
-                                <span className="font-nunito text-sm text-gray-500">
-                                  {setting.unit}
-                                </span>
-                              )}
-                            </div>
-                          )}
-
-                          {setting.type === "select" && (
-                            <select
-                              defaultValue={setting.value}
-                              className="px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple focus:border-transparent font-nunito"
-                            >
-                              {setting.options?.map((option) => (
-                                <option key={option} value={option}>
-                                  {option}
-                                </option>
-                              ))}
-                            </select>
-                          )}
-
-                          {setting.type === "button" && (
-                            <Button
-                              size="sm"
-                              variant={setting.variant === "danger" ? "secondary" : "primary"}
-                              className={setting.variant === "danger" ? "text-red-600 border-red-200 hover:bg-red-50" : ""}
-                            >
-                              {setting.action}
-                            </Button>
-                          )}
+                        <div className="ml-4">
+                          <ToggleSwitch
+                            enabled={setting.enabled}
+                            onChange={(enabled) => handleSettingChange(setting.key, enabled)}
+                            size="md"
+                          />
                         </div>
-                      </div>
+                      </motion.div>
                     ))}
                   </div>
                 </motion.div>
               ))}
             </div>
 
+            {/* Account Section */}
             <motion.div
-              className="mt-8 text-center"
+              className="bg-white rounded-2xl border-6 border-white p-6 shadow-lg mt-8"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.8, ease: "easeOut" }}
+              transition={{ delay: 0.8 }}
             >
-              <Button size="lg">
-                Save Changes
-              </Button>
+              <h2 className="font-fredoka font-bold text-xl text-gray-900 mb-6 flex items-center">
+                👤 Account
+              </h2>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Button variant="neutral" size="md" className="w-full">
+                  Export Data
+                </Button>
+                <Button variant="neutral" size="md" className="w-full">
+                  Import Data
+                </Button>
+                <Button variant="warning" size="md" className="w-full">
+                  Reset Settings
+                </Button>
+                <Button variant="destructive" size="md" className="w-full">
+                  Delete Account
+                </Button>
+              </div>
+            </motion.div>
+
+            {/* Version Info */}
+            <motion.div
+              className="text-center mt-8 text-gray-500"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 1 }}
+            >
+              <p className="font-nunito text-sm">
+                Flashy v1.0.0 • Made with ❤️ for learners everywhere
+              </p>
             </motion.div>
           </motion.div>
         </div>

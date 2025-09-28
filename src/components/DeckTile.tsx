@@ -57,7 +57,7 @@ export default function DeckTile({
         <div className="flex gap-2">
           <button
             onClick={onStudy}
-            className="text-white px-4 py-2 rounded-full text-sm font-fredoka font-bold transition-all duration-150 transform hover:translate-y-[1px] active:translate-y-[2px]"
+            className="text-white px-4 py-3 rounded-full text-sm font-fredoka font-bold transition-all duration-150 transform hover:translate-y-[1px] active:translate-y-[2px] cursor-pointer min-h-[48px] min-w-[48px]"
             style={{
               background: 'linear-gradient(135deg, #7C3AED 0%, #5B21B6 100%)',
               boxShadow: '0 4px 0 #4C1D95, 0 6px 12px rgba(76, 29, 149, 0.4)',
@@ -70,11 +70,11 @@ export default function DeckTile({
               e.currentTarget.style.boxShadow = '0 4px 0 #4C1D95, 0 6px 12px rgba(76, 29, 149, 0.4)';
             }}
           >
-            Study
+            View
           </button>
           <button
             onClick={onEdit}
-            className="text-purple-600 px-4 py-2 rounded-full text-sm font-fredoka font-bold transition-all duration-150 transform hover:translate-y-[1px] active:translate-y-[2px]"
+            className="text-purple-600 px-4 py-3 rounded-full text-sm font-fredoka font-bold transition-all duration-150 transform hover:translate-y-[1px] active:translate-y-[2px] cursor-pointer min-h-[48px] min-w-[48px]"
             style={{
               background: 'linear-gradient(135deg, #F3F4F6 0%, #E5E7EB 100%)',
               boxShadow: '0 4px 0 #D1D5DB, 0 6px 12px rgba(209, 213, 219, 0.4)',

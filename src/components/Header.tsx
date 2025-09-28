@@ -2,11 +2,14 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export default function Header() {
+  const pathname = usePathname();
+
   const navItems = [
+    { name: "My Decks", href: "/" },
     { name: "Shop", href: "/shop" },
-    { name: "Decks", href: "/decks" },
     { name: "Settings", href: "/settings" },
   ];
 
@@ -71,9 +74,21 @@ export default function Header() {
               >
                 <Link
                   href={item.href}
-                  className="font-nunito font-semibold text-gray-700 hover:text-primary-purple transition-all duration-200 px-4 py-2 rounded-2xl hover:bg-cream2 hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 active:scale-95"
+                  className={`font-nunito font-semibold transition-all duration-200 px-4 py-3 rounded-2xl hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 active:scale-95 relative ${
+                    pathname === item.href
+                      ? 'text-white bg-gradient-to-r from-purple-light to-primary-purple shadow-lg'
+                      : 'text-gray-700 hover:text-primary-purple hover:bg-cream2'
+                  }`}
                 >
                   {item.name}
+                  {pathname === item.href && (
+                    <motion.div
+                      className="absolute inset-0 bg-gradient-to-r from-purple-light to-primary-purple rounded-2xl -z-10"
+                      layoutId="activeNavItem"
+                      initial={false}
+                      transition={{ duration: 0.3, ease: "easeInOut" }}
+                    />
+                  )}
                 </Link>
               </motion.div>
             ))}
