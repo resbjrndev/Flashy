@@ -43,7 +43,7 @@ export default function Dashboard() {
   }, []);
 
   const handleStudy = (deckId: string) => {
-    router.push(`/deck/${deckId}/review`);
+    router.push(`/deck/${deckId}`);
   };
 
   const handleEdit = (deckId: string) => {

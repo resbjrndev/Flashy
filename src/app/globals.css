@@ -1,8 +1,91 @@
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&family=Nunito:wght@200;300;400;500;600;700;800&display=swap');
 @import "tailwindcss";
 
 :root {
   --background: #ffffff;
   --foreground: #171717;
+
+  /* Theme Variables */
+  --theme-primary: #6B46C1;
+  --theme-primary-light: #8B5CF6;
+  --theme-primary-dark: #5B21B6;
+  --theme-secondary: #F97316;
+  --theme-secondary-light: #FBBF24;
+  --theme-secondary-dark: #F59E0B;
+  --theme-accent: #EC4899;
+  --theme-success: #10B981;
+  --theme-warning: #EF4444;
+  --theme-background: #FFF9F3;
+  --theme-background-secondary: #F8F0E8;
+  --theme-surface: #ffffff;
+  --theme-border: #E5E7EB;
+  --theme-text: #171717;
+  --theme-text-secondary: #6B7280;
+}
+
+/* Ocean Breeze Theme */
+:root[data-theme="ocean"] {
+  --theme-primary: #667eea;
+  --theme-primary-light: #764ba2;
+  --theme-primary-dark: #4facfe;
+  --theme-secondary: #00f2fe;
+  --theme-secondary-light: #a8edea;
+  --theme-secondary-dark: #fed6e3;
+  --theme-accent: #4facfe;
+  --theme-background: #f0f8ff;
+  --theme-background-secondary: #e6f3ff;
+}
+
+/* Sunset Theme */
+:root[data-theme="sunset"] {
+  --theme-primary: #ff9a56;
+  --theme-primary-light: #ff6b95;
+  --theme-primary-dark: #ff8a80;
+  --theme-secondary: #ffecd2;
+  --theme-secondary-light: #fcb69f;
+  --theme-secondary-dark: #ff5722;
+  --theme-accent: #ff6b95;
+  --theme-background: #fff5f0;
+  --theme-background-secondary: #ffe8e0;
+}
+
+/* Forest Theme */
+:root[data-theme="forest"] {
+  --theme-primary: #134e5e;
+  --theme-primary-light: #71b280;
+  --theme-primary-dark: #56ab2f;
+  --theme-secondary: #a8e6cf;
+  --theme-secondary-light: #dcedc1;
+  --theme-secondary-dark: #56ab2f;
+  --theme-accent: #71b280;
+  --theme-background: #f0fff4;
+  --theme-background-secondary: #e6ffea;
+}
+
+/* Neon Theme */
+:root[data-theme="neon"] {
+  --theme-primary: #f093fb;
+  --theme-primary-light: #f5576c;
+  --theme-primary-dark: #43e97b;
+  --theme-secondary: #4facfe;
+  --theme-secondary-light: #00f2fe;
+  --theme-secondary-dark: #38f9d7;
+  --theme-accent: #f5576c;
+  --theme-background: #fef7ff;
+  --theme-background-secondary: #fce7ff;
+}
+
+/* Cherry Blossom Theme */
+:root[data-theme="cherry"] {
+  --theme-primary: #ffecd2;
+  --theme-primary-light: #fcb69f;
+  --theme-primary-dark: #ff9a9e;
+  --theme-secondary: #fecfef;
+  --theme-secondary-light: #fbc2eb;
+  --theme-secondary-dark: #a6c1ee;
+  --theme-accent: #fcb69f;
+  --theme-background: #fffafa;
+  --theme-background-secondary: #fff0f5;
 }
 
 @theme inline {
@@ -42,7 +125,72 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-nunito), system-ui, -apple-system, sans-serif;
+}
+
+/* Font classes */
+.font-fredoka {
+  font-family: var(--font-fredoka), 'Fredoka', sans-serif;
+}
+
+.font-nunito {
+  font-family: var(--font-nunito), 'Nunito', sans-serif;
+}
+
+/* Input and form element font inheritance */
+input, textarea, select, button {
+  font-family: inherit;
+}
+
+/* Explicit font styling for form elements */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+textarea,
+select {
+  font-family: var(--font-nunito), 'Nunito', system-ui, -apple-system, sans-serif !important;
+}
+
+/* Force fonts for all inputs with highest specificity */
+input, textarea, select {
+  font-family: var(--font-nunito), 'Nunito', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+  color: #1f2937 !important;
+}
+
+/* Super specific targeting for all form inputs */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+textarea,
+select {
+  font-family: var(--font-nunito), 'Nunito', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+  color: #1f2937 !important;
+  font-weight: 500 !important;
+}
+
+/* Maximum specificity for create deck form inputs */
+form input.font-nunito,
+form textarea.font-nunito,
+form select.font-nunito,
+.bg-cream2.border-gray-200 input,
+.bg-cream2.border-gray-200 textarea,
+.bg-cream2.border-gray-200 select {
+  font-family: var(--font-nunito), 'Nunito', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+  color: #1f2937 !important;
+  font-weight: 500 !important;
+}
+
+/* Specific targeting for form inputs */
+.bg-cream2 input,
+.bg-cream2 textarea,
+.bg-cream2 select,
+input.font-nunito,
+textarea.font-nunito,
+select.font-nunito {
+  font-family: var(--font-nunito), 'Nunito', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+  font-weight: 500 !important;
 }
 
 /* Utility classes */
@@ -96,6 +244,56 @@ body {
   50% { opacity: 1; transform: scale(1); }
 }
 
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 5px rgba(107, 70, 193, 0.3); }
+}
+
+/* Respect user's motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .animate-pulse,
+  .animate-bounce,
+  .animate-spin {
+    animation: none !important;
+  }
+}
+
+/* Focus indicators for accessibility */
+.focus-ring {
+  @apply focus:outline-none focus:ring-2 focus:ring-primary-purple focus:ring-offset-2 focus:ring-offset-white;
+}
+
+/* Screen reader only content */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* High contrast support */
+@media (prefers-contrast: high) {
+  .bg-gradient-to-br,
+  .bg-gradient-to-r {
+    background: var(--theme-surface) !important;
+    border: 2px solid var(--theme-text) !important;
+  }
+}
+
+/* Pulse glow animation */
 @keyframes pulse-glow {
   0%, 100% { box-shadow: 0 0 5px rgba(107, 70, 193, 0.3); }
   50% { box-shadow: 0 0 20px rgba(107, 70, 193, 0.6), 0 0 30px rgba(107, 70, 193, 0.4); }

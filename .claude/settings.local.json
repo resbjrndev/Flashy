@@ -12,7 +12,9 @@
       "Bash(npx tsc:*)",
       "Bash(code .)",
       "Bash(rm:*)",
-      "Read(//c/Users/kaspe/Desktop/Projects/**)"
+      "Read(//c/Users/kaspe/Desktop/Projects/**)",
+      "Bash(npx kill-port:*)",
+      "Bash(npx next dev:*)"
     ],
     "deny": [],
     "ask": []

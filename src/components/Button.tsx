@@ -10,6 +10,9 @@ interface ButtonProps {
   disabled?: boolean;
   className?: string;
   type?: "button" | "submit" | "reset";
+  ariaLabel?: string;
+  ariaDescribedBy?: string;
+  autoFocus?: boolean;
 }
 
 export default function Button({
@@ -20,10 +23,13 @@ export default function Button({
   disabled = false,
   className = "",
   type = "button",
+  ariaLabel,
+  ariaDescribedBy,
+  autoFocus = false,
 }: ButtonProps) {
   const [isHovered, setIsHovered] = useState(false);
 
-  const baseClasses = "font-fredoka font-bold rounded-full cursor-pointer select-none relative sparkle-container inline-block transition-all duration-200";
+  const baseClasses = "font-fredoka font-bold rounded-full cursor-pointer select-none relative sparkle-container inline-block transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-purple focus:ring-offset-2 focus:ring-offset-white";
 
   const variantClasses = {
     primary: `
@@ -57,9 +63,9 @@ export default function Button({
   };
 
   const sizeClasses = {
-    sm: "px-6 py-3 text-sm font-semibold",
-    md: "px-10 py-5 text-base font-bold",
-    lg: "px-14 py-6 text-lg font-bold",
+    sm: "px-4 py-3 text-sm font-semibold sm:px-6 sm:py-3 min-h-[48px] min-w-[48px]",
+    md: "px-6 py-3 text-base font-bold sm:px-10 sm:py-5 min-h-[48px]",
+    lg: "px-8 py-4 text-lg font-bold sm:px-14 sm:py-6 min-h-[48px]",
   };
 
   const disabledClasses = disabled
@@ -73,27 +79,27 @@ export default function Button({
     switch (variant) {
       case 'primary':
         return {
-          background: 'linear-gradient(135deg, #7C3AED 0%, #5B21B6 100%)',
+          background: 'linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-primary-dark) 100%)',
           boxShadow: isHovered
-            ? '0 6px 0 #4C1D95, 0 10px 25px rgba(76, 29, 149, 0.4)'
-            : '0 8px 0 #4C1D95, 0 12px 25px rgba(76, 29, 149, 0.4)',
+            ? '0 6px 0 var(--theme-primary-dark), 0 10px 25px rgba(107, 70, 193, 0.4)'
+            : '0 8px 0 var(--theme-primary-dark), 0 12px 25px rgba(107, 70, 193, 0.4)',
           textShadow: '0 1px 2px rgba(0, 0, 0, 0.3)',
           transform: isHovered ? 'translateY(2px)' : 'translateY(0px)',
           border: 'none'
         };
       case 'secondary':
         return {
-          background: 'linear-gradient(135deg, #FBBF24 0%, #F59E0B 100%)',
+          background: 'linear-gradient(135deg, var(--theme-secondary-light) 0%, var(--theme-secondary) 100%)',
           boxShadow: isHovered
-            ? '0 6px 0 #D97706, 0 10px 25px rgba(217, 119, 6, 0.4)'
-            : '0 8px 0 #D97706, 0 12px 25px rgba(217, 119, 6, 0.4)',
+            ? '0 6px 0 var(--theme-secondary-dark), 0 10px 25px rgba(217, 119, 6, 0.4)'
+            : '0 8px 0 var(--theme-secondary-dark), 0 12px 25px rgba(217, 119, 6, 0.4)',
           textShadow: '0 1px 2px rgba(0, 0, 0, 0.3)',
           transform: isHovered ? 'translateY(2px)' : 'translateY(0px)',
           border: 'none'
         };
       case 'success':
         return {
-          background: 'linear-gradient(135deg, #86EFAC 0%, #10B981 100%)',
+          background: 'linear-gradient(135deg, #86EFAC 0%, var(--theme-success) 100%)',
           boxShadow: isHovered
             ? '0 6px 0 #047857, 0 10px 25px rgba(4, 120, 87, 0.4)'
             : '0 8px 0 #047857, 0 12px 25px rgba(4, 120, 87, 0.4)',
@@ -103,7 +109,7 @@ export default function Button({
         };
       case 'warning':
         return {
-          background: 'linear-gradient(135deg, #FCA5A5 0%, #EF4444 100%)',
+          background: 'linear-gradient(135deg, #FCA5A5 0%, var(--theme-warning) 100%)',
           boxShadow: isHovered
             ? '0 6px 0 #B91C1C, 0 10px 25px rgba(185, 28, 28, 0.4)'
             : '0 8px 0 #B91C1C, 0 12px 25px rgba(185, 28, 28, 0.4)',
@@ -113,7 +119,7 @@ export default function Button({
         };
       case 'destructive':
         return {
-          background: 'linear-gradient(135deg, #EF4444 0%, #DC2626 100%)',
+          background: 'linear-gradient(135deg, var(--theme-warning) 0%, #DC2626 100%)',
           boxShadow: isHovered
             ? '0 6px 0 #991B1B, 0 10px 25px rgba(153, 27, 27, 0.4)'
             : '0 8px 0 #991B1B, 0 12px 25px rgba(153, 27, 27, 0.4)',
@@ -123,7 +129,7 @@ export default function Button({
         };
       case 'constructive':
         return {
-          background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
+          background: 'linear-gradient(135deg, var(--theme-success) 0%, #059669 100%)',
           boxShadow: isHovered
             ? '0 6px 0 #047857, 0 10px 25px rgba(4, 120, 87, 0.4)'
             : '0 8px 0 #047857, 0 12px 25px rgba(4, 120, 87, 0.4)',
@@ -146,20 +152,30 @@ export default function Button({
     }
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (disabled) return;
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      onClick?.();
+    }
+  };
+
   return (
     <button
       type={type}
       className={buttonClasses}
       onClick={disabled ? undefined : onClick}
+      onKeyDown={handleKeyDown}
       disabled={disabled}
       style={getGradientStyle(isHovered)}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      aria-label={ariaLabel}
+      aria-describedby={ariaDescribedBy}
+      autoFocus={autoFocus}
     >
-      {/* Inner highlight for tactile effect */}
       <div className="absolute inset-1 bg-white/10 rounded-full pointer-events-none" />
 
-      {/* Content */}
       <span className="relative z-10">
         {children}
       </span>

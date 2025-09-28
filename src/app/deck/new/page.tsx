@@ -137,7 +137,8 @@ export default function NewDeckPage() {
                     value={formData.title}
                     onChange={(e) => handleInputChange('title', e.target.value)}
                     placeholder="Enter deck title..."
-                    className={`w-full px-6 py-4 rounded-2xl font-nunito font-semibold transition-all duration-200 shadow-lg border-4 text-gray-900 placeholder-gray-500 ${
+                    style={{ fontFamily: 'Nunito, "Segoe UI", Arial, sans-serif', fontWeight: '700', color: '#ff0000', fontSize: '20px', backgroundColor: 'yellow', border: '3px solid red' }}
+                    className={`w-full px-6 py-4 rounded-2xl transition-all duration-200 shadow-lg border-4 placeholder-gray-500 ${
                       errors.title
                         ? 'bg-red-50 border-warning-red/30 focus:bg-white focus:border-warning-red focus:shadow-xl focus:shadow-warning-red/20'
                         : 'bg-cream2 border-gray-200 focus:bg-white focus:border-primary-purple focus:shadow-xl focus:shadow-primary-purple/20'
@@ -157,7 +158,8 @@ export default function NewDeckPage() {
                     onChange={(e) => handleInputChange('description', e.target.value)}
                     placeholder="Describe your deck..."
                     rows={3}
-                    className={`w-full px-6 py-4 rounded-2xl font-nunito font-semibold resize-none transition-all duration-200 shadow-lg border-4 text-gray-900 placeholder-gray-500 ${
+                    style={{ fontFamily: 'Nunito, "Segoe UI", Arial, sans-serif', fontWeight: '700', color: '#ff0000', fontSize: '20px', backgroundColor: 'yellow', border: '3px solid red' }}
+                    className={`w-full px-6 py-4 rounded-2xl resize-none transition-all duration-200 shadow-lg border-4 placeholder-gray-500 ${
                       errors.description
                         ? 'bg-red-50 border-warning-red/30 focus:bg-white focus:border-warning-red focus:shadow-xl focus:shadow-warning-red/20'
                         : 'bg-cream2 border-gray-200 focus:bg-white focus:border-primary-purple focus:shadow-xl focus:shadow-primary-purple/20'
@@ -176,7 +178,8 @@ export default function NewDeckPage() {
                     <select
                       value={formData.category}
                       onChange={(e) => handleInputChange('category', e.target.value)}
-                      className="w-full px-6 py-4 rounded-2xl font-nunito font-semibold transition-all duration-200 shadow-lg border-4 bg-cream2 border-gray-200 focus:bg-white focus:border-primary-purple focus:shadow-xl focus:shadow-primary-purple/20 text-gray-900"
+                      style={{ fontFamily: 'Nunito, "Segoe UI", Arial, sans-serif', fontWeight: '700', color: '#ff0000', fontSize: '20px', backgroundColor: 'yellow', border: '3px solid red' }}
+                      className="w-full px-6 py-4 rounded-2xl transition-all duration-200 shadow-lg border-4 bg-cream2 border-gray-200 focus:bg-white focus:border-primary-purple focus:shadow-xl focus:shadow-primary-purple/20"
                     >
                       <option value="Language Learning">Language Learning</option>
                       <option value="Science">Science</option>
