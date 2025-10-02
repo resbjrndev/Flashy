@@ -5,8 +5,22 @@ import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Layout from "@/components/Layout";
 import Button from "@/components/Button";
-import { getDeck, saveDeck, addCardToDeck, updateCard, deleteCard } from "@/lib/storage";
-import { Deck, Card } from "@/types";
+import { api } from "@/lib/api";
+
+interface Card {
+  id: string;
+  front: string;
+  back: string;
+  deck_id: string;
+  created_at: string;
+}
+
+interface Deck {
+  id: string;
+  title: string;
+  description: string | null;
+  created_at: string;
+}
 
 interface CardFormData {
   front: string;
@@ -19,21 +33,48 @@ export default function EditDeckPage() {
   const deckId = params.id as string;
 
   const [deck, setDeck] = useState<Deck | null>(null);
+  const [cards, setCards] = useState<Card[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [newCard, setNewCard] = useState<CardFormData>({ front: '', back: '' });
   const [editingCard, setEditingCard] = useState<{ card: Card; data: CardFormData } | null>(null);
   const [cardErrors, setCardErrors] = useState<{ front?: string; back?: string }>({});
 
-  useEffect(() => {
-    if (deckId) {
-      const foundDeck = getDeck(deckId);
-      if (foundDeck) {
-        setDeck(foundDeck);
-      } else {
+  const loadDeckAndCards = async () => {
+    if (!deckId) return;
+
+    try {
+      setLoading(true);
+
+      // Fetch both deck and cards
+      const [deckResponse, cardsResponse] = await Promise.all([
+        api.getDeck(deckId),
+        api.getCards(deckId)
+      ]);
+
+      if (deckResponse.deck) {
+        setDeck(deckResponse.deck);
+      } else if (deckResponse.error) {
+        console.error('Failed to load deck:', deckResponse.error);
         router.push('/');
+        return;
       }
+
+      if (cardsResponse.cards) {
+        setCards(cardsResponse.cards);
+      } else if (cardsResponse.error) {
+        console.error('Failed to load cards:', cardsResponse.error);
+      }
+    } catch (error) {
+      console.error('Error loading deck:', error);
+      router.push('/');
+    } finally {
       setLoading(false);
     }
+  };
+
+  useEffect(() => {
+    loadDeckAndCards();
   }, [deckId, router]);
 
   const validateCard = (cardData: CardFormData): boolean => {
@@ -55,47 +96,43 @@ export default function EditDeckPage() {
     return Object.keys(errors).length === 0;
   };
 
-  const handleAddCard = () => {
+  const handleAddCard = async () => {
     if (!validateCard(newCard) || !deck) return;
 
-    addCardToDeck(deck.id, {
-      front: newCard.front.trim(),
-      back: newCard.back.trim(),
-      reviewCount: 0,
-    });
+    try {
+      const response = await api.createCard(
+        deck.id,
+        newCard.front.trim(),
+        newCard.back.trim()
+      );
 
-    // Refresh deck data
-    const updatedDeck = getDeck(deck.id);
-    if (updatedDeck) setDeck(updatedDeck);
-
-    setNewCard({ front: '', back: '' });
-    setCardErrors({});
+      if (response.card) {
+        await loadDeckAndCards(); // Reload cards
+        setNewCard({ front: '', back: '' });
+        setCardErrors({});
+      } else if (response.error) {
+        setCardErrors({ front: response.error });
+      }
+    } catch (error) {
+      console.error('Error adding card:', error);
+      setCardErrors({ front: 'Failed to add card. Please try again.' });
+    }
   };
 
-  const handleUpdateCard = () => {
+  const handleUpdateCard = async () => {
     if (!editingCard || !validateCard(editingCard.data) || !deck) return;
 
-    updateCard(deck.id, editingCard.card.id, {
-      front: editingCard.data.front.trim(),
-      back: editingCard.data.back.trim(),
-    });
-
-    // Refresh deck data
-    const updatedDeck = getDeck(deck.id);
-    if (updatedDeck) setDeck(updatedDeck);
-
+    // TODO: Implement update card endpoint
+    console.log('Update card not yet implemented in API');
     setEditingCard(null);
     setCardErrors({});
   };
 
-  const handleDeleteCard = (cardId: string) => {
+  const handleDeleteCard = async (cardId: string) => {
     if (!deck) return;
 
-    deleteCard(deck.id, cardId);
-
-    // Refresh deck data
-    const updatedDeck = getDeck(deck.id);
-    if (updatedDeck) setDeck(updatedDeck);
+    // TODO: Implement delete card endpoint
+    console.log('Delete card not yet implemented in API');
   };
 
   const startEditCard = (card: Card) => {
@@ -109,6 +146,38 @@ export default function EditDeckPage() {
   const cancelEdit = () => {
     setEditingCard(null);
     setCardErrors({});
+  };
+
+  const handleDeleteDeck = async () => {
+    if (!deck) return;
+
+    // Check if this is a starter deck
+    const isStarter = deck.id && (deck as any).device_id === 'starter-decks-system';
+
+    if (isStarter) {
+      alert('Starter decks cannot be deleted.');
+      return;
+    }
+
+    if (!confirm(`Are you sure you want to delete "${deck.title}"? This will also delete all ${cards.length} cards in this deck. This action cannot be undone.`)) {
+      return;
+    }
+
+    try {
+      setIsDeleting(true);
+      const response = await api.deleteDeck(deck.id);
+
+      if (response.success) {
+        router.push('/');
+      } else if (response.error) {
+        alert(`Failed to delete deck: ${response.error}`);
+      }
+    } catch (error) {
+      console.error('Failed to delete deck:', error);
+      alert('Failed to delete deck. Please try again.');
+    } finally {
+      setIsDeleting(false);
+    }
   };
 
   if (loading) {
@@ -164,7 +233,7 @@ export default function EditDeckPage() {
                 {deck.description}
               </p>
               <p className="font-nunito text-sm text-gray-500">
-                {deck.cards.length} {deck.cards.length === 1 ? 'card' : 'cards'}
+                {cards.length} {cards.length === 1 ? 'card' : 'cards'}
               </p>
             </div>
 
@@ -240,10 +309,10 @@ export default function EditDeckPage() {
                 transition={{ duration: 0.6, delay: 0.4, ease: "easeOut" }}
               >
                 <h2 className="font-fredoka font-bold text-2xl text-gray-900 mb-4">
-                  Cards ({deck.cards.length})
+                  Cards ({cards.length})
                 </h2>
 
-                {deck.cards.length === 0 ? (
+                {cards.length === 0 ? (
                   <div className="text-center py-8">
                     <div className="w-16 h-16 bg-gray-100 rounded-xl flex items-center justify-center mx-auto mb-4">
                       <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -255,7 +324,7 @@ export default function EditDeckPage() {
                   </div>
                 ) : (
                   <div className="space-y-4 max-h-96 overflow-y-auto">
-                    {deck.cards.map((card, index) => (
+                    {cards.map((card, index) => (
                       <div key={card.id} className="border border-gray-200 rounded-lg p-4">
                         {editingCard && editingCard.card.id === card.id ? (
                           <div className="space-y-4">
@@ -324,7 +393,7 @@ export default function EditDeckPage() {
                             </div>
                             <div className="flex justify-between items-center">
                               <span className="font-nunito text-xs text-gray-500">
-                                Card {index + 1} • Reviewed {card.reviewCount} times
+                                Card {index + 1}
                               </span>
                               <div className="flex space-x-2">
                                 <button
@@ -360,9 +429,9 @@ export default function EditDeckPage() {
               <Button
                 size="lg"
                 onClick={() => router.push(`/deck/${deck.id}/review`)}
-                disabled={deck.cards.length === 0}
+                disabled={cards.length === 0}
               >
-                Start Studying ({deck.cards.length} cards)
+                Start Review ({cards.length} cards)
               </Button>
               <Button
                 variant="secondary"
@@ -371,6 +440,16 @@ export default function EditDeckPage() {
               >
                 Back to Dashboard
               </Button>
+              {(deck as any).device_id !== 'starter-decks-system' && (
+                <Button
+                  size="lg"
+                  onClick={handleDeleteDeck}
+                  disabled={isDeleting}
+                  className="bg-red-500 hover:bg-red-600 text-white"
+                >
+                  {isDeleting ? 'Deleting...' : 'Delete Deck'}
+                </Button>
+              )}
             </motion.div>
           </motion.div>
         </div>

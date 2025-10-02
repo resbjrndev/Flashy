@@ -1,0 +1,37 @@
+export const runtime = 'nodejs';
+import { NextRequest, NextResponse } from 'next/server';
+import { query } from '@/lib/db';
+import { getDeviceId } from '@/lib/api-helpers';
+
+export async function GET(req: NextRequest) {
+  const deviceId = getDeviceId(req);
+  if (!deviceId) return NextResponse.json({ error: 'Missing device id' }, { status: 400 });
+
+  // Get both user's decks and starter decks
+  const res = await query(
+    `select d.id, d.title, d.description, d.created_at, d.device_id,
+            count(c.id)::int as card_count,
+            case when d.device_id = 'starter-decks-system' then true else false end as is_starter
+       from decks d
+  left join cards c on c.deck_id = d.id
+      where d.device_id = $1 or d.device_id = 'starter-decks-system'
+   group by d.id
+   order by is_starter desc, d.created_at desc`,
+    [deviceId]
+  );
+  return NextResponse.json({ decks: res.rows });
+}
+
+export async function POST(req: NextRequest) {
+  const deviceId = getDeviceId(req);
+  if (!deviceId) return NextResponse.json({ error: 'Missing device id' }, { status: 400 });
+
+  const { title, description } = await req.json();
+  if (!title?.trim()) return NextResponse.json({ error: 'Title required' }, { status: 400 });
+
+  const res = await query(
+    'insert into decks (device_id, title, description) values ($1,$2,$3) returning *',
+    [deviceId, title.trim(), description ?? null]
+  );
+  return NextResponse.json({ deck: res.rows[0] }, { status: 201 });
+}

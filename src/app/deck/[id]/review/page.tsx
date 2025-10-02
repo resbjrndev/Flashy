@@ -25,6 +25,7 @@ export default function ReviewPage() {
   const [isFlipped, setIsFlipped] = useState(false);
   const [reviewedCards, setReviewedCards] = useState<string[]>([]);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [isComplete, setIsComplete] = useState(false);
 
   useEffect(() => {
     if (deckId) {
@@ -54,8 +55,9 @@ export default function ReviewPage() {
     if (currentCardIndex >= deck.cards.length - 1) {
       // Review session complete
       setTimeout(() => {
-        router.push(`/deck/${deck.id}`);
-      }, 1000);
+        setIsComplete(true);
+        setIsAnimating(false);
+      }, 300);
       return;
     }
 
@@ -146,6 +148,98 @@ export default function ReviewPage() {
   const currentCard = deck.cards[currentCardIndex];
   const progress = currentCardIndex + 1;
 
+  // Completion screen
+  if (isComplete) {
+    return (
+      <Layout>
+        <div className="min-h-[calc(100vh-4rem)] px-4 py-8 flex items-center justify-center" style={{
+          background: 'linear-gradient(135deg, var(--theme-background-secondary), var(--theme-background))'
+        }}>
+          <motion.div
+            className="max-w-2xl w-full"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5 }}
+          >
+            <div className="bg-white rounded-2xl border-4 border-white shadow-2xl p-12 text-center">
+              {/* Success Animation */}
+              <motion.div
+                className="text-8xl mb-6"
+                initial={{ scale: 0, rotate: -180 }}
+                animate={{ scale: 1, rotate: 0 }}
+                transition={{ duration: 0.6, type: "spring", stiffness: 200 }}
+              >
+                🎉
+              </motion.div>
+
+              {/* Title */}
+              <h1 className="font-fredoka font-bold text-4xl text-gray-900 mb-4">
+                Session Complete!
+              </h1>
+
+              {/* Stats */}
+              <div className="bg-gradient-to-r from-purple-50 to-blue-50 rounded-xl p-6 mb-6">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <div className="text-3xl font-fredoka font-bold text-purple-600 mb-1">
+                      {deck.cards.length}
+                    </div>
+                    <div className="font-nunito text-sm text-gray-600">Cards Reviewed</div>
+                  </div>
+                  <div>
+                    <div className="text-3xl font-fredoka font-bold text-green-600 mb-1">
+                      100%
+                    </div>
+                    <div className="font-nunito text-sm text-gray-600">Completion</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Message */}
+              <p className="font-nunito text-lg text-gray-700 mb-8">
+                Great job! You've reviewed all cards in <span className="font-bold text-purple-600">{deck.title}</span>.
+                Keep up the excellent work!
+              </p>
+
+              {/* Action Buttons */}
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Button
+                  size="lg"
+                  onClick={() => {
+                    // Reset and restart
+                    setCurrentCardIndex(0);
+                    setIsFlipped(false);
+                    setReviewedCards([]);
+                    setIsComplete(false);
+                    // Re-shuffle cards
+                    const shuffled = [...deck.cards].sort(() => Math.random() - 0.5);
+                    setDeck({ ...deck, cards: shuffled });
+                  }}
+                >
+                  Study Again
+                </Button>
+                <Button
+                  variant="secondary"
+                  size="lg"
+                  onClick={() => router.push(`/deck/${deck.id}`)}
+                >
+                  View Deck
+                </Button>
+                <Button
+                  variant="neutral"
+                  size="lg"
+                  onClick={() => router.push('/')}
+                >
+                  Back Home
+                </Button>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </Layout>
+    );
+  }
+
   return (
     <Layout>
       <div className="min-h-[calc(100vh-4rem)] px-4 py-8" style={{
@@ -201,34 +295,35 @@ export default function ReviewPage() {
 
             {/* Grade Buttons Section */}
             <div className="flex justify-center">
-              <AnimatePresence>
-                {isFlipped && (
+              <AnimatePresence mode="wait">
+                {isFlipped ? (
                   <ReviewHUD
+                    key="review-hud"
                     onGrade={handleGrade}
                     disabled={isAnimating}
                   />
+                ) : (
+                  <motion.div
+                    key="hint-card"
+                    className="bg-white rounded-2xl border-4 border-white p-6 shadow-lg text-center max-w-md"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <div className="text-6xl mb-4">🤔</div>
+                    <h3 className="font-fredoka font-bold text-lg text-gray-900 mb-2">
+                      Think about it
+                    </h3>
+                    <p className="font-nunito text-gray-600 text-sm mb-3">
+                      Click the card or press Enter/Space to reveal the answer
+                    </p>
+                    <div className="text-xs text-gray-500 font-nunito">
+                      Keyboard shortcuts: 1-4 for grading, Esc to exit
+                    </div>
+                  </motion.div>
                 )}
               </AnimatePresence>
-
-              {!isFlipped && (
-                <motion.div
-                  className="bg-white rounded-2xl border-4 border-white p-6 shadow-lg text-center max-w-md"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.3 }}
-                >
-                  <div className="text-6xl mb-4">🤔</div>
-                  <h3 className="font-fredoka font-bold text-lg text-gray-900 mb-2">
-                    Think about it
-                  </h3>
-                  <p className="font-nunito text-gray-600 text-sm mb-3">
-                    Click the card or press Enter/Space to reveal the answer
-                  </p>
-                  <div className="text-xs text-gray-500 font-nunito">
-                    Keyboard shortcuts: 1-4 for grading, Esc to exit
-                  </div>
-                </motion.div>
-              )}
             </div>
 
             {/* Bottom Actions */}

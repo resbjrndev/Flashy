@@ -5,8 +5,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Layout from "@/components/Layout";
 import Button from "@/components/Button";
-import { saveDeck } from "@/lib/storage";
-import { Deck } from "@/types";
+import { api } from "@/lib/api";
 
 interface FormData {
   title: string;
@@ -66,23 +65,19 @@ export default function NewDeckPage() {
     setIsSubmitting(true);
 
     try {
-      const now = new Date();
-      const newDeck: Deck = {
-        id: crypto.randomUUID(),
-        title: formData.title.trim(),
-        description: formData.description.trim(),
-        category: formData.category,
-        color: formData.color,
-        cards: [],
-        isPublic: false,
-        createdAt: now,
-        updatedAt: now,
-      };
+      const response = await api.createDeck(
+        formData.title.trim(),
+        formData.description.trim()
+      );
 
-      saveDeck(newDeck);
-
-      // Redirect to deck edit page
-      router.push(`/deck/${newDeck.id}/edit`);
+      if (response.deck?.id) {
+        // Redirect to deck edit page
+        router.push(`/deck/${response.deck.id}/edit`);
+      } else if (response.error) {
+        setErrors({ title: response.error });
+      } else {
+        setErrors({ title: 'Failed to create deck. Please try again.' });
+      }
     } catch (error) {
       console.error('Error creating deck:', error);
       setErrors({ title: 'Failed to create deck. Please try again.' });
@@ -137,8 +132,7 @@ export default function NewDeckPage() {
                     value={formData.title}
                     onChange={(e) => handleInputChange('title', e.target.value)}
                     placeholder="Enter deck title..."
-                    style={{ fontFamily: 'Nunito, "Segoe UI", Arial, sans-serif', fontWeight: '700', color: '#ff0000', fontSize: '20px', backgroundColor: 'yellow', border: '3px solid red' }}
-                    className={`w-full px-6 py-4 rounded-2xl transition-all duration-200 shadow-lg border-4 placeholder-gray-500 ${
+                    className={`w-full px-6 py-4 rounded-2xl font-nunito font-semibold transition-all duration-200 shadow-lg border-4 text-gray-900 placeholder-gray-500 ${
                       errors.title
                         ? 'bg-red-50 border-warning-red/30 focus:bg-white focus:border-warning-red focus:shadow-xl focus:shadow-warning-red/20'
                         : 'bg-cream2 border-gray-200 focus:bg-white focus:border-primary-purple focus:shadow-xl focus:shadow-primary-purple/20'
@@ -158,8 +152,7 @@ export default function NewDeckPage() {
                     onChange={(e) => handleInputChange('description', e.target.value)}
                     placeholder="Describe your deck..."
                     rows={3}
-                    style={{ fontFamily: 'Nunito, "Segoe UI", Arial, sans-serif', fontWeight: '700', color: '#ff0000', fontSize: '20px', backgroundColor: 'yellow', border: '3px solid red' }}
-                    className={`w-full px-6 py-4 rounded-2xl resize-none transition-all duration-200 shadow-lg border-4 placeholder-gray-500 ${
+                    className={`w-full px-6 py-4 rounded-2xl font-nunito font-semibold resize-none transition-all duration-200 shadow-lg border-4 text-gray-900 placeholder-gray-500 ${
                       errors.description
                         ? 'bg-red-50 border-warning-red/30 focus:bg-white focus:border-warning-red focus:shadow-xl focus:shadow-warning-red/20'
                         : 'bg-cream2 border-gray-200 focus:bg-white focus:border-primary-purple focus:shadow-xl focus:shadow-primary-purple/20'
@@ -178,8 +171,7 @@ export default function NewDeckPage() {
                     <select
                       value={formData.category}
                       onChange={(e) => handleInputChange('category', e.target.value)}
-                      style={{ fontFamily: 'Nunito, "Segoe UI", Arial, sans-serif', fontWeight: '700', color: '#ff0000', fontSize: '20px', backgroundColor: 'yellow', border: '3px solid red' }}
-                      className="w-full px-6 py-4 rounded-2xl transition-all duration-200 shadow-lg border-4 bg-cream2 border-gray-200 focus:bg-white focus:border-primary-purple focus:shadow-xl focus:shadow-primary-purple/20"
+                      className="w-full px-6 py-4 rounded-2xl font-nunito font-semibold transition-all duration-200 shadow-lg border-4 text-gray-900 bg-cream2 border-gray-200 focus:bg-white focus:border-primary-purple focus:shadow-xl focus:shadow-primary-purple/20"
                     >
                       <option value="Language Learning">Language Learning</option>
                       <option value="Science">Science</option>
@@ -199,7 +191,7 @@ export default function NewDeckPage() {
                           key={color}
                           type="button"
                           onClick={() => handleInputChange('color', color)}
-                          className={`w-12 h-12 rounded-2xl border-4 transition-all duration-200 shadow-lg hover:shadow-xl hover:-translate-y-1 active:translate-y-0 active:scale-95 ${
+                          className={`w-12 h-12 rounded-2xl border-4 transition-all duration-200 shadow-lg hover:shadow-xl hover:-translate-y-1 active:translate-y-0 active:scale-95 cursor-pointer ${
                             formData.color === color
                               ? 'border-white ring-4 ring-primary-purple/30 shadow-xl'
                               : 'border-white/60 hover:border-white'

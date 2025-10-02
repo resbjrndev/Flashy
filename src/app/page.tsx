@@ -7,39 +7,56 @@ import { useEffect, useState } from "react";
 import Layout from "@/components/Layout";
 import Button from "@/components/Button";
 import DeckTile from "@/components/DeckTile";
-import { getDecks, initializeWithMockData } from "@/lib/storage";
-import { Deck } from "@/types";
+import { api } from "@/lib/api";
+
+interface Deck {
+  id: string;
+  title: string;
+  description: string;
+  card_count: number;
+  created_at: string;
+  device_id: string;
+  is_starter?: boolean;
+}
 
 export default function Dashboard() {
   const router = useRouter();
   const [decks, setDecks] = useState<Deck[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const loadDecks = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await api.getDecks();
+      if (response.decks) {
+        setDecks(response.decks);
+      } else if (response.error) {
+        setError(response.error);
+      }
+    } catch (err: any) {
+      console.error('Failed to load decks:', err);
+      setError('Failed to load decks. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    // Check if we have any existing data with old format and clear it
-    if (typeof window !== 'undefined') {
-      const existingData = localStorage.getItem('flashy_decks');
-      if (existingData) {
-        try {
-          const parsed = JSON.parse(existingData);
-          // If we find old format data (simple numeric IDs), clear storage
-          if (parsed.some && parsed.some((deck: any) => deck.id === '1' || deck.id === '2' || deck.id === '3')) {
-            localStorage.removeItem('flashy_decks');
-          }
-        } catch (e) {
-          // If parsing fails, clear corrupted data
-          localStorage.removeItem('flashy_decks');
-        }
+    loadDecks();
+  }, []);
+
+  // Add effect to refresh decks on route change
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        loadDecks();
       }
-    }
+    };
 
-    // Initialize with mock data if needed
-    initializeWithMockData();
-
-    // Load decks from storage
-    const loadedDecks = getDecks();
-    setDecks(loadedDecks);
-    setLoading(false);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
   }, []);
 
   const handleStudy = (deckId: string) => {
@@ -49,6 +66,7 @@ export default function Dashboard() {
   const handleEdit = (deckId: string) => {
     router.push(`/deck/${deckId}/edit`);
   };
+
 
   if (loading) {
     return (
@@ -111,7 +129,18 @@ export default function Dashboard() {
             </Button>
           </div>
 
-          {decks.length === 0 ? (
+          {error ? (
+            <div className="text-center py-12">
+              <div className="text-6xl mb-4">⚠️</div>
+              <h3 className="font-fredoka font-bold text-xl text-gray-800 mb-2">
+                Error loading decks
+              </h3>
+              <p className="font-nunito text-gray-600 mb-6">
+                {error}
+              </p>
+              <Button onClick={loadDecks}>Try Again</Button>
+            </div>
+          ) : decks.length === 0 ? (
             <div className="text-center py-12">
               <div className="text-6xl mb-4">📚</div>
               <h3 className="font-fredoka font-bold text-xl text-gray-800 mb-2">
@@ -131,9 +160,9 @@ export default function Dashboard() {
                   key={deck.id}
                   id={deck.id}
                   title={deck.title}
-                  description={deck.description}
-                  cardCount={deck.cards.length}
-                  category={deck.category || 'Uncategorized'}
+                  description={deck.description || ''}
+                  cardCount={deck.card_count}
+                  category={deck.is_starter ? '⭐ Starter Deck' : 'My Deck'}
                   onStudy={() => handleStudy(deck.id)}
                   onEdit={() => handleEdit(deck.id)}
                   index={index}

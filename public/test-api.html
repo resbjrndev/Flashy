@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Flashy API Test</title>
+  <style>
+    body { font-family: monospace; padding: 20px; }
+    button { margin: 5px; padding: 10px; cursor: pointer; }
+    .result { margin: 10px 0; padding: 10px; background: #f0f0f0; border-radius: 4px; }
+    .success { background: #d4edda; }
+    .error { background: #f8d7da; }
+  </style>
+</head>
+<body>
+  <h1>Flashy API Test</h1>
+  <div id="device-id"></div>
+
+  <h2>Tests</h2>
+  <button onclick="testHealth()">1. Test Health</button>
+  <button onclick="testCreateDeck()">2. Create Deck</button>
+  <button onclick="testListDecks()">3. List Decks</button>
+  <button onclick="testCreateCard()">4. Create Card (needs deck)</button>
+  <button onclick="testListCards()">5. List Cards (needs deck)</button>
+  <button onclick="testDeleteDeck()">6. Delete Deck (needs deck)</button>
+  <button onclick="clearResults()">Clear Results</button>
+
+  <div id="results"></div>
+
+  <script>
+    // Ensure device ID
+    if (!localStorage.flashy_device_id) {
+      localStorage.flashy_device_id = crypto.randomUUID();
+    }
+    document.getElementById('device-id').innerHTML =
+      `<strong>Device ID:</strong> ${localStorage.flashy_device_id}`;
+
+    let lastDeckId = null;
+
+    function log(message, isError = false) {
+      const div = document.createElement('div');
+      div.className = 'result ' + (isError ? 'error' : 'success');
+      div.innerHTML = `<strong>${new Date().toLocaleTimeString()}</strong><br>${message}`;
+      document.getElementById('results').prepend(div);
+    }
+
+    function clearResults() {
+      document.getElementById('results').innerHTML = '';
+    }
+
+    async function testHealth() {
+      try {
+        const r = await fetch('/api/health');
+        const data = await r.json();
+        log(`Health: ${JSON.stringify(data, null, 2)}`);
+      } catch (e) {
+        log(`Health error: ${e.message}`, true);
+      }
+    }
+
+    async function testCreateDeck() {
+      try {
+        const r = await fetch('/api/decks', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Device-Id': localStorage.flashy_device_id
+          },
+          body: JSON.stringify({
+            title: 'Test Deck ' + Date.now(),
+            description: 'Created via test page'
+          })
+        });
+        const data = await r.json();
+        if (data.deck?.id) {
+          lastDeckId = data.deck.id;
+          log(`Created deck: ${JSON.stringify(data, null, 2)}`);
+        } else {
+          log(`Create deck failed: ${JSON.stringify(data)}`, true);
+        }
+      } catch (e) {
+        log(`Create deck error: ${e.message}`, true);
+      }
+    }
+
+    async function testListDecks() {
+      try {
+        const r = await fetch('/api/decks', {
+          headers: { 'X-Device-Id': localStorage.flashy_device_id }
+        });
+        const data = await r.json();
+        log(`List decks: ${JSON.stringify(data, null, 2)}`);
+        if (data.decks?.length > 0) {
+          lastDeckId = data.decks[0].id;
+        }
+      } catch (e) {
+        log(`List decks error: ${e.message}`, true);
+      }
+    }
+
+    async function testCreateCard() {
+      if (!lastDeckId) {
+        log('No deck ID available. Create or list decks first.', true);
+        return;
+      }
+      try {
+        const r = await fetch(`/api/decks/${lastDeckId}/cards`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Device-Id': localStorage.flashy_device_id
+          },
+          body: JSON.stringify({
+            front: 'Test Question ' + Date.now(),
+            back: 'Test Answer'
+          })
+        });
+        const data = await r.json();
+        log(`Created card in deck ${lastDeckId}: ${JSON.stringify(data, null, 2)}`);
+      } catch (e) {
+        log(`Create card error: ${e.message}`, true);
+      }
+    }
+
+    async function testListCards() {
+      if (!lastDeckId) {
+        log('No deck ID available. Create or list decks first.', true);
+        return;
+      }
+      try {
+        const r = await fetch(`/api/decks/${lastDeckId}/cards`, {
+          headers: { 'X-Device-Id': localStorage.flashy_device_id }
+        });
+        const data = await r.json();
+        log(`List cards for deck ${lastDeckId}: ${JSON.stringify(data, null, 2)}`);
+      } catch (e) {
+        log(`List cards error: ${e.message}`, true);
+      }
+    }
+
+    async function testDeleteDeck() {
+      if (!lastDeckId) {
+        log('No deck ID available. Create or list decks first.', true);
+        return;
+      }
+      const deckToDelete = lastDeckId;
+      try {
+        const r = await fetch(`/api/decks/${deckToDelete}`, {
+          method: 'DELETE',
+          headers: { 'X-Device-Id': localStorage.flashy_device_id }
+        });
+        const data = await r.json();
+        log(`Deleted deck ${deckToDelete}: ${JSON.stringify(data, null, 2)}`);
+        lastDeckId = null;
+      } catch (e) {
+        log(`Delete deck error: ${e.message}`, true);
+      }
+    }
+  </script>
+</body>
+</html>

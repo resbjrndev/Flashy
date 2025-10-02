@@ -10,7 +10,6 @@ export default function Header() {
   const navItems = [
     { name: "My Decks", href: "/" },
     { name: "Shop", href: "/shop" },
-    { name: "Settings", href: "/settings" },
   ];
 
   return (

@@ -85,7 +85,7 @@ export default function Button({
             : '0 8px 0 var(--theme-primary-dark), 0 12px 25px rgba(107, 70, 193, 0.4)',
           textShadow: '0 1px 2px rgba(0, 0, 0, 0.3)',
           transform: isHovered ? 'translateY(2px)' : 'translateY(0px)',
-          border: 'none'
+          border: '0 1px 2px rgba(0, 0, 0, 0.3)',
         };
       case 'secondary':
         return {
@@ -95,7 +95,8 @@ export default function Button({
             : '0 8px 0 var(--theme-secondary-dark), 0 12px 25px rgba(217, 119, 6, 0.4)',
           textShadow: '0 1px 2px rgba(0, 0, 0, 0.3)',
           transform: isHovered ? 'translateY(2px)' : 'translateY(0px)',
-          border: 'none'
+          border: '0 1px 2px rgba(0, 0, 0, 0.3)',
+
         };
       case 'success':
         return {
