@@ -7,8 +7,24 @@ import Layout from "@/components/Layout";
 import Button from "@/components/Button";
 import FlashCard from "@/components/FlashCard";
 import LoadingSpinner from "@/components/LoadingSpinner";
-import { getDeck, deleteDeck } from "@/lib/storage";
-import { Deck } from "@/types";
+import { api } from "@/lib/api";
+
+interface Card {
+  id: string;
+  front: string;
+  back: string;
+  created_at: string;
+}
+
+interface Deck {
+  id: string;
+  title: string;
+  description: string;
+  created_at: string;
+  cards: Card[];
+  color?: string;
+  category?: string;
+}
 
 export default function DeckDetailPage() {
   const router = useRouter();
@@ -21,15 +37,31 @@ export default function DeckDetailPage() {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   useEffect(() => {
-    if (deckId) {
-      const foundDeck = getDeck(deckId);
-      if (foundDeck) {
-        setDeck(foundDeck);
-      } else {
-        router.push('/');
+    const loadDeck = async () => {
+      if (deckId) {
+        try {
+          const [deckResponse, cardsResponse] = await Promise.all([
+            api.getDeck(deckId),
+            api.getCards(deckId)
+          ]);
+
+          if (deckResponse.deck && cardsResponse.cards) {
+            setDeck({
+              ...deckResponse.deck,
+              cards: cardsResponse.cards,
+            });
+          } else {
+            router.push('/');
+          }
+        } catch (error) {
+          console.error('Failed to load deck:', error);
+          router.push('/');
+        } finally {
+          setLoading(false);
+        }
       }
-      setLoading(false);
-    }
+    };
+    loadDeck();
   }, [deckId, router]);
 
   const handleStartReview = () => {
@@ -40,10 +72,15 @@ export default function DeckDetailPage() {
     router.push(`/deck/${deckId}/edit`);
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (deck) {
-      deleteDeck(deck.id);
-      router.push('/');
+      try {
+        await api.deleteDeck(deck.id);
+        router.push('/');
+      } catch (error) {
+        console.error('Failed to delete deck:', error);
+        alert('Failed to delete deck. Please try again.');
+      }
     }
   };
 
@@ -97,11 +134,13 @@ export default function DeckDetailPage() {
                 {deck.description}
               </p>
               <div className="flex items-center justify-center space-x-4 text-sm text-gray-500">
-                <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full font-medium">
-                  {deck.category}
-                </span>
+                {deck.category && (
+                  <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full font-medium">
+                    {deck.category}
+                  </span>
+                )}
                 <span>{deck.cards.length} cards</span>
-                <span>Created {deck.createdAt.toLocaleDateString()}</span>
+                <span>Created {new Date(deck.created_at).toLocaleDateString()}</span>
               </div>
             </div>
 

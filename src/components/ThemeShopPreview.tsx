@@ -47,7 +47,6 @@ export default function ThemeShopPreview() {
             whileHover={{ x: 4 }}
             transition={{ type: "spring", stiffness: 300, damping: 20 }}
           >
-            <span>View All Themes</span>
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>

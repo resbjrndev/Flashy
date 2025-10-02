@@ -70,7 +70,7 @@ export default function DeckTile({
               e.currentTarget.style.boxShadow = '0 4px 0 #4C1D95, 0 6px 12px rgba(76, 29, 149, 0.4)';
             }}
           >
-            View
+            Review
           </button>
           <button
             onClick={onEdit}

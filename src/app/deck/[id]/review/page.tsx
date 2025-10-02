@@ -9,10 +9,29 @@ import FlashCard from "@/components/FlashCard";
 import ReviewHUD from "@/components/ReviewHUD";
 import ProgressBar from "@/components/ProgressBar";
 import LoadingSpinner from "@/components/LoadingSpinner";
-import { getDeck } from "@/lib/storage";
-import { Deck, Card } from "@/types";
+import { api } from "@/lib/api";
 
 type GradeType = 'again' | 'hard' | 'good' | 'easy';
+
+interface Card {
+  id: string;
+  front: string;
+  back: string;
+  created_at: string;
+  reviewCount?: number;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
+interface Deck {
+  id: string;
+  title: string;
+  description: string;
+  created_at: string;
+  cards: Card[];
+  color?: string;
+  category?: string;
+}
 
 export default function ReviewPage() {
   const router = useRouter();
@@ -28,18 +47,33 @@ export default function ReviewPage() {
   const [isComplete, setIsComplete] = useState(false);
 
   useEffect(() => {
-    if (deckId) {
-      const foundDeck = getDeck(deckId);
-      if (foundDeck) {
-        setDeck(foundDeck);
-        // Shuffle cards for review
-        const shuffled = [...foundDeck.cards].sort(() => Math.random() - 0.5);
-        setDeck({ ...foundDeck, cards: shuffled });
-      } else {
-        router.push('/');
+    const loadDeck = async () => {
+      if (deckId) {
+        try {
+          const [deckResponse, cardsResponse] = await Promise.all([
+            api.getDeck(deckId),
+            api.getCards(deckId)
+          ]);
+
+          if (deckResponse.deck && cardsResponse.cards) {
+            // Shuffle cards for review
+            const shuffled = [...cardsResponse.cards].sort(() => Math.random() - 0.5);
+            setDeck({
+              ...deckResponse.deck,
+              cards: shuffled,
+            });
+          } else {
+            router.push('/');
+          }
+        } catch (error) {
+          console.error('Failed to load deck:', error);
+          router.push('/');
+        } finally {
+          setLoading(false);
+        }
       }
-      setLoading(false);
-    }
+    };
+    loadDeck();
   }, [deckId, router]);
 
   const handleGrade = async (grade: GradeType) => {
@@ -334,10 +368,10 @@ export default function ReviewPage() {
               transition={{ delay: 0.5 }}
             >
               <Button
-                variant="neutral"
-                onClick={() => router.push(`/deck/${deck.id}`)}
+                variant="secondary"
+                onClick={() => router.push(`/deck/${deck.id}/edit`)}
               >
-                End Session
+                Edit Deck
               </Button>
             </motion.div>
           </motion.div>

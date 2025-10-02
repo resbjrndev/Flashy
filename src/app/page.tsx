@@ -60,7 +60,7 @@ export default function Dashboard() {
   }, []);
 
   const handleStudy = (deckId: string) => {
-    router.push(`/deck/${deckId}`);
+    router.push(`/deck/${deckId}/review`);
   };
 
   const handleEdit = (deckId: string) => {
@@ -106,9 +106,7 @@ export default function Dashboard() {
             <Link href="/deck/new">
               <Button size="lg">Create New Deck</Button>
             </Link>
-            <Link href="/shop">
-              <Button variant="secondary" size="lg">Browse Shop</Button>
-            </Link>
+
           </div>
         </motion.div>
 
@@ -124,9 +122,7 @@ export default function Dashboard() {
               <h2 className="font-fredoka text-3xl font-bold text-gray-800">Your Decks</h2>
               <p className="font-nunito text-gray-600 mt-2">Continue your learning journey</p>
             </div>
-            <Button variant="secondary" size="sm">
-              View All
-            </Button>
+        
           </div>
 
           {error ? (
