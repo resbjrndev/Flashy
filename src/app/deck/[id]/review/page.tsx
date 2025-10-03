@@ -287,18 +287,23 @@ export default function ReviewPage() {
           >
             {/* Header */}
             <div className="text-center mb-6">
-              <div className="flex items-center justify-center space-x-4 mb-4">
+              <div className="flex flex-col items-center justify-center space-y-8 mb-4">
                 <div
                   className="w-4 h-4 rounded-full"
                   style={{ backgroundColor: deck.color }}
                 />
+                        <Button
+                variant="neutral"
+                onClick={() => router.push(`/deck/${deck.id}/edit`)}
+              >
+                Edit Deck
+              </Button>
                 <h1 className="font-fredoka font-bold text-3xl text-gray-900">
                   {deck.title}
                 </h1>
+           
               </div>
-              <p className="font-nunito text-gray-600">
-                Review Session
-              </p>
+           
             </div>
 
             {/* Progress Bar */}
@@ -367,12 +372,7 @@ export default function ReviewPage() {
               animate={{ opacity: 1 }}
               transition={{ delay: 0.5 }}
             >
-              <Button
-                variant="secondary"
-                onClick={() => router.push(`/deck/${deck.id}/edit`)}
-              >
-                Edit Deck
-              </Button>
+           
             </motion.div>
           </motion.div>
         </div>

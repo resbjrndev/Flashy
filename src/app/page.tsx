@@ -162,6 +162,7 @@ export default function Dashboard() {
                   description={deck.description || ''}
                   cardCount={deck.card_count}
                   category={deck.is_starter ? '⭐ Starter Deck' : 'My Deck'}
+                  color={deck.color}
                   onStudy={() => handleStudy(deck.id)}
                   onEdit={() => handleEdit(deck.id)}
                   index={index}

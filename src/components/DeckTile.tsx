@@ -8,6 +8,7 @@ interface DeckTileProps {
   description: string;
   cardCount: number;
   category: string;
+  color?: string;
   onStudy: () => void;
   onEdit: () => void;
   index?: number;
@@ -18,6 +19,7 @@ export default function DeckTile({
   description,
   cardCount,
   category,
+  color = '#6B4EFF',
   onStudy,
   onEdit,
   index = 0
@@ -39,8 +41,14 @@ export default function DeckTile({
       }}
     >
       <div className="flex justify-between items-start mb-3 pl-[2px]"> {/* tiny nudge; reads better with long titles */}
-        <h3 className="font-fredoka font-bold text-lg text-gray-800">{title}</h3>
-        <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
+        <div className="flex items-center gap-2">
+          <div
+            className="w-3 h-3 rounded-full flex-shrink-0"
+            style={{ backgroundColor: color }}
+          />
+          <h3 className="font-fredoka font-bold text-lg text-gray-800">{title}</h3>
+        </div>
+        <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium flex-shrink-0">
           {category}
         </span>
       </div>

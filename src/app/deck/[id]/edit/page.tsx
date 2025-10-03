@@ -122,17 +122,44 @@ export default function EditDeckPage() {
   const handleUpdateCard = async () => {
     if (!editingCard || !validateCard(editingCard.data) || !deck) return;
 
-    // TODO: Implement update card endpoint
-    console.log('Update card not yet implemented in API');
-    setEditingCard(null);
-    setCardErrors({});
+    try {
+      const response = await api.updateCard(
+        deck.id,
+        editingCard.card.id,
+        editingCard.data.front.trim(),
+        editingCard.data.back.trim()
+      );
+
+      if (response.card) {
+        await loadDeckAndCards(); // Reload cards
+        setEditingCard(null);
+        setCardErrors({});
+      } else if (response.error) {
+        setCardErrors({ front: response.error });
+      }
+    } catch (error) {
+      console.error('Error updating card:', error);
+      setCardErrors({ front: 'Failed to update card. Please try again.' });
+    }
   };
 
   const handleDeleteCard = async (cardId: string) => {
     if (!deck) return;
 
-    // TODO: Implement delete card endpoint
-    console.log('Delete card not yet implemented in API');
+    if (!confirm('Are you sure you want to delete this card?')) return;
+
+    try {
+      const response = await api.deleteCard(deck.id, cardId);
+
+      if (response.success) {
+        await loadDeckAndCards(); // Reload cards
+      } else if (response.error) {
+        alert(`Failed to delete card: ${response.error}`);
+      }
+    } catch (error) {
+      console.error('Error deleting card:', error);
+      alert('Failed to delete card. Please try again.');
+    }
   };
 
   const startEditCard = (card: Card) => {
@@ -259,7 +286,7 @@ export default function EditDeckPage() {
                         setNewCard(prev => ({ ...prev, front: e.target.value }));
                         setCardErrors(prev => ({ ...prev, front: undefined }));
                       }}
-                      placeholder="Enter the question or prompt..."
+                      placeholder="e.g., What is the capital of France?"
                       rows={3}
                       className={`w-full px-6 py-4 rounded-2xl font-nunito font-semibold resize-none transition-all duration-200 shadow-lg border-4 text-gray-900 placeholder-gray-500 ${
                         cardErrors.front
@@ -282,7 +309,7 @@ export default function EditDeckPage() {
                         setNewCard(prev => ({ ...prev, back: e.target.value }));
                         setCardErrors(prev => ({ ...prev, back: undefined }));
                       }}
-                      placeholder="Enter the answer..."
+                      placeholder="e.g., Paris"
                       rows={3}
                       className={`w-full px-6 py-4 rounded-2xl font-nunito font-semibold resize-none transition-all duration-200 shadow-lg border-4 text-gray-900 placeholder-gray-500 ${
                         cardErrors.back
@@ -398,13 +425,13 @@ export default function EditDeckPage() {
                               <div className="flex space-x-2">
                                 <button
                                   onClick={() => startEditCard(card)}
-                                  className="font-nunito text-sm text-blue-600 hover:text-blue-800 transition-colors"
+                                  className="font-nunito text-sm text-blue-600 hover:text-blue-800 transition-colors cursor-pointer"
                                 >
                                   Edit
                                 </button>
                                 <button
                                   onClick={() => handleDeleteCard(card.id)}
-                                  className="font-nunito text-sm text-red-600 hover:text-red-800 transition-colors"
+                                  className="font-nunito text-sm text-red-600 hover:text-red-800 transition-colors cursor-pointer"
                                 >
                                   Delete
                                 </button>
@@ -434,7 +461,7 @@ export default function EditDeckPage() {
                 Start Review ({cards.length} cards)
               </Button>
               <Button
-                variant="secondary"
+                variant="neutral"
                 size="lg"
                 onClick={() => router.push('/')}
               >
@@ -442,10 +469,10 @@ export default function EditDeckPage() {
               </Button>
               {(deck as any).device_id !== 'starter-decks-system' && (
                 <Button
+                  variant="destructive"
                   size="lg"
                   onClick={handleDeleteDeck}
                   disabled={isDeleting}
-                  className="bg-red-500 hover:bg-red-600 text-white"
                 >
                   {isDeleting ? 'Deleting...' : 'Delete Deck'}
                 </Button>

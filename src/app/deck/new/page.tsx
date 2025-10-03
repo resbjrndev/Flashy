@@ -67,7 +67,8 @@ export default function NewDeckPage() {
     try {
       const response = await api.createDeck(
         formData.title.trim(),
-        formData.description.trim()
+        formData.description.trim(),
+        formData.color
       );
 
       if (response.deck?.id) {
@@ -131,7 +132,7 @@ export default function NewDeckPage() {
                     type="text"
                     value={formData.title}
                     onChange={(e) => handleInputChange('title', e.target.value)}
-                    placeholder="Enter deck title..."
+                    placeholder="e.g., Spanish Vocabulary, Biology Chapter 5"
                     className={`w-full px-6 py-4 rounded-2xl font-nunito font-semibold transition-all duration-200 shadow-lg border-4 text-gray-900 placeholder-gray-500 ${
                       errors.title
                         ? 'bg-red-50 border-warning-red/30 focus:bg-white focus:border-warning-red focus:shadow-xl focus:shadow-warning-red/20'
@@ -150,7 +151,7 @@ export default function NewDeckPage() {
                   <textarea
                     value={formData.description}
                     onChange={(e) => handleInputChange('description', e.target.value)}
-                    placeholder="Describe your deck..."
+                    placeholder="e.g., Common Spanish phrases for everyday conversations"
                     rows={3}
                     className={`w-full px-6 py-4 rounded-2xl font-nunito font-semibold resize-none transition-all duration-200 shadow-lg border-4 text-gray-900 placeholder-gray-500 ${
                       errors.description
@@ -200,6 +201,7 @@ export default function NewDeckPage() {
                         />
                       ))}
                     </div>
+                    
                   </div>
                 </div>
 
@@ -214,7 +216,7 @@ export default function NewDeckPage() {
                   </Button>
                   <Button
                     type="button"
-                    variant="secondary"
+                    variant="destructive"
                     size="lg"
                     onClick={() => router.push('/')}
                     disabled={isSubmitting}

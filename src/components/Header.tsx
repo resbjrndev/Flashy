@@ -28,14 +28,7 @@ export default function Header() {
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
           {/* Logo */}
-          <motion.div
-            whileHover={{
-              scale: 1.05,
-              y: -2,
-              transition: { duration: 0.2 }
-            }}
-            whileTap={{ scale: 0.95 }}
-          >
+          <div>
             <Link
               href="/"
               className="flex items-center space-x-3"
@@ -56,7 +49,7 @@ export default function Header() {
                 </span>
               </div>
             </Link>
-          </motion.div>
+          </div>
 
           {/* Navigation */}
           <nav className="hidden md:flex space-x-8">
