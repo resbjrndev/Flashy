@@ -64,8 +64,9 @@ export default function Button({
 
   const sizeClasses = {
     sm: "px-4 py-3 text-sm font-semibold sm:px-6 sm:py-3 min-h-[48px] min-w-[48px]",
-    md: "px-6 py-3 text-base font-bold sm:px-10 sm:py-5 min-h-[48px]",
+    md: "px-6 py-[11px] text-base font-bold sm:px-10 sm:py-5 min-h-[48px]", // slightly shorter on mobile; felt more balanced
     lg: "px-8 py-4 text-lg font-bold sm:px-14 sm:py-6 min-h-[48px]",
+    // md: "px-6 py-3.5 text-base font-bold sm:px-10 sm:py-5 min-h-[48px]", // alternative spacing
   };
 
   const disabledClasses = disabled

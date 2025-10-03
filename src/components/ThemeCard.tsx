@@ -51,7 +51,7 @@ export default function ThemeCard({
       onHoverEnd={() => setIsHovered(false)}
     >
       {/* Theme Preview */}
-      <div className="relative h-32">
+      <div className="relative h-32 mb-[3px]"> {/* off by 1px; felt cramped otherwise */}
         <div
           className="w-full h-full"
           style={{ background: gradient }}

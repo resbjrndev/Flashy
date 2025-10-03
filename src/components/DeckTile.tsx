@@ -38,7 +38,7 @@ export default function DeckTile({
         transition: { duration: 0.1, ease: "easeOut" }
       }}
     >
-      <div className="flex justify-between items-start mb-3">
+      <div className="flex justify-between items-start mb-3 pl-[2px]"> {/* tiny nudge; reads better with long titles */}
         <h3 className="font-fredoka font-bold text-lg text-gray-800">{title}</h3>
         <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
           {category}
@@ -57,9 +57,9 @@ export default function DeckTile({
         <div className="flex gap-2">
           <button
             onClick={onStudy}
-            className="text-white px-4 py-3 rounded-full text-sm font-fredoka font-bold transition-all duration-150 transform hover:translate-y-[1px] active:translate-y-[2px] cursor-pointer min-h-[48px] min-w-[48px]"
+            className="text-white px-4 py-[11px] rounded-full text-sm font-fredoka font-bold transition-all duration-150 transform hover:translate-y-[1px] active:translate-y-[2px] cursor-pointer min-h-[48px] min-w-[48px]"
             style={{
-              background: 'linear-gradient(135deg, #7C3AED 0%, #5B21B6 100%)',
+              background: 'linear-gradient(135deg, #7b3aed 0%, #5B21B6 100%)',
               boxShadow: '0 4px 0 #4C1D95, 0 6px 12px rgba(76, 29, 149, 0.4)',
               textShadow: '0 1px 2px rgba(0, 0, 0, 0.3)'
             }}

@@ -19,25 +19,35 @@ async function deckOwned(deckId: string, deviceId: string) {
 }
 
 export async function GET(req: NextRequest, { params }: { params: { deckId: string } }) {
-  const deviceId = getDeviceId(req);
-  if (!deviceId) return NextResponse.json({ error: 'Missing device id' }, { status: 400 });
-  if (!(await deckAccessible(params.deckId, deviceId))) return NextResponse.json({ error: 'Not found' }, { status: 404 });
+  try {
+    const deviceId = getDeviceId(req);
+    if (!deviceId) return NextResponse.json({ error: 'Missing device id' }, { status: 400 });
+    if (!(await deckAccessible(params.deckId, deviceId))) return NextResponse.json({ error: 'Not found' }, { status: 404 });
 
-  const res = await query('select * from cards where deck_id=$1 order by created_at asc', [params.deckId]);
-  return NextResponse.json({ cards: res.rows });
+    const res = await query('select * from cards where deck_id=$1 order by created_at asc', [params.deckId]);
+    return NextResponse.json({ cards: res.rows });
+  } catch (error) {
+    console.error('GET /api/decks/[deckId]/cards error:', error);
+    return NextResponse.json({ error: 'Database error', details: error instanceof Error ? error.message : 'Unknown error' }, { status: 500 });
+  }
 }
 
 export async function POST(req: NextRequest, { params }: { params: { deckId: string } }) {
-  const deviceId = getDeviceId(req);
-  if (!deviceId) return NextResponse.json({ error: 'Missing device id' }, { status: 400 });
-  if (!(await deckOwned(params.deckId, deviceId))) return NextResponse.json({ error: 'Not found' }, { status: 404 });
+  try {
+    const deviceId = getDeviceId(req);
+    if (!deviceId) return NextResponse.json({ error: 'Missing device id' }, { status: 400 });
+    if (!(await deckOwned(params.deckId, deviceId))) return NextResponse.json({ error: 'Not found' }, { status: 404 });
 
-  const { front, back } = await req.json();
-  if (!front?.trim() || !back?.trim()) return NextResponse.json({ error: 'Front/back required' }, { status: 400 });
+    const { front, back } = await req.json();
+    if (!front?.trim() || !back?.trim()) return NextResponse.json({ error: 'Front/back required' }, { status: 400 });
 
-  const res = await query(
-    'insert into cards (deck_id, front, back) values ($1,$2,$3) returning *',
-    [params.deckId, front.trim(), back.trim()]
-  );
-  return NextResponse.json({ card: res.rows[0] }, { status: 201 });
+    const res = await query(
+      'insert into cards (deck_id, front, back) values ($1,$2,$3) returning *',
+      [params.deckId, front.trim(), back.trim()]
+    );
+    return NextResponse.json({ card: res.rows[0] }, { status: 201 });
+  } catch (error: any) {
+    console.error('POST /api/decks/[deckId]/cards error:', error);
+    return NextResponse.json({ error: 'Database error', details: error.message }, { status: 500 });
+  }
 }

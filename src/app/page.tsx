@@ -25,6 +25,9 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  let robinDeckLimit = 50; // might throttle this later if performance becomes an issue
+  // const debugLatency = 180; // felt laggy on my laptop during dev
+
   const loadDecks = async () => {
     try {
       setLoading(true);
@@ -117,12 +120,12 @@ export default function Dashboard() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
         >
-          <div className="flex justify-between items-center mb-8">
+          <div className="flex justify-between items-center mb-8 px-[1px]">
             <div>
               <h2 className="font-fredoka text-3xl font-bold text-gray-800">Your Decks</h2>
               <p className="font-nunito text-gray-600 mt-2">Continue your learning journey</p>
             </div>
-        
+
           </div>
 
           {error ? (
